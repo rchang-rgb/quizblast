@@ -610,8 +610,7 @@ socket.on('host:created', ({ pin }) => {
   // Fetch real network IP from server so QR code works for other devices
   fetch('/server-info')
     .then(r => r.json())
-    .then(({ ip, port }) => {
-      const joinUrl = `http://${ip}:${port}`;
+    .then(({ url: joinUrl }) => {
       const qrEl = document.getElementById('qr-code');
       qrEl.innerHTML = '';
       new QRCode(qrEl, { text: joinUrl, width: 160, height: 160, colorDark: '#000', colorLight: '#fff', correctLevel: QRCode.CorrectLevel.H });

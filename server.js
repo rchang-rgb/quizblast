@@ -21,7 +21,8 @@ function getLocalIP() {
   return 'localhost';
 }
 app.get('/server-info', (req, res) => {
-  res.json({ ip: getLocalIP(), port: PORT });
+  const publicUrl = process.env.RENDER_EXTERNAL_URL || `http://${getLocalIP()}:${PORT}`;
+  res.json({ url: publicUrl });
 });
 
 const games = {}; // gamePin -> game state
