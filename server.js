@@ -21,7 +21,8 @@ function getLocalIP() {
   return 'localhost';
 }
 app.get('/server-info', (req, res) => {
-  const publicUrl = process.env.RENDER_EXTERNAL_URL || `http://${getLocalIP()}:${PORT}`;
+  const publicUrl = (process.env.RENDER_EXTERNAL_URL || `http://${getLocalIP()}:${PORT}`).trim();
+  console.log('server-info returning:', publicUrl);
   res.json({ url: publicUrl });
 });
 

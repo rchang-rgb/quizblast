@@ -611,10 +611,11 @@ socket.on('host:created', ({ pin }) => {
   fetch('/server-info')
     .then(r => r.json())
     .then(({ url: joinUrl }) => {
+      console.log('Join URL for QR:', joinUrl);
       const qrEl = document.getElementById('qr-code');
       qrEl.innerHTML = '';
-      new QRCode(qrEl, { text: joinUrl, width: 160, height: 160, colorDark: '#000', colorLight: '#fff', correctLevel: QRCode.CorrectLevel.H });
-      document.getElementById('join-url').textContent = joinUrl;
+      new QRCode(qrEl, { text: joinUrl, width: 200, height: 200, colorDark: '#000000', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M });
+      document.getElementById('join-url').innerHTML = `<a href="${joinUrl}" style="color:#3498db">${joinUrl}</a>`;
     });
 
   showScreen('host-lobby');
