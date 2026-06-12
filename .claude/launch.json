@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "QuizBlast Demo",
+      "runtimeExecutable": "powershell",
+      "runtimeArgs": ["-Command", "$l=[System.Net.HttpListener]::new();$l.Prefixes.Add('http://localhost:5173/');$l.Start();Write-Host 'Server started';while($true){$c=$l.GetContext();$p=$c.Request.Url.LocalPath;if($p -eq '/' -or $p -eq ''){$p='/demo.html'};$f='C:\\Users\\RyanChang\\kahoot-clone\\public'+$p.Replace('/','\\')|%{$_};try{$b=[System.IO.File]::ReadAllBytes($f);$ext=$f.Split('.')[-1];$mime=if($ext -eq 'html'){'text/html'}elseif($ext -eq 'js'){'application/javascript'}elseif($ext -eq 'css'){'text/css'}else{'application/octet-stream'};$c.Response.ContentType=$mime;$c.Response.ContentLength64=$b.Length;$c.Response.OutputStream.Write($b,0,$b.Length)}catch{$c.Response.StatusCode=404};$c.Response.OutputStream.Close()}"],
+      "port": 5173
+    }
+  ]
+}
