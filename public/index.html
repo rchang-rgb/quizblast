@@ -197,6 +197,14 @@
 <canvas id="bg-canvas"></canvas>
 <div id="toast"></div>
 
+<!-- Mute button -->
+<button id="mute-btn" onclick="toggleMute()" title="Toggle music" style="
+  position:fixed;bottom:20px;right:20px;z-index:9999;
+  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);
+  color:#fff;border-radius:50%;width:44px;height:44px;font-size:1.3rem;
+  cursor:pointer;backdrop-filter:blur(10px);transition:background .2s;
+">🔊</button>
+
 <!-- ════════════════ HOME ════════════════ -->
 <div id="home" class="screen">
   <div class="logo-wrap">
@@ -419,6 +427,13 @@ let questionDuration = 20;
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
   document.getElementById(id).classList.remove('hidden');
+
+  if (id === 'home' || id === 'join' || id === 'host-setup')     Music.play('home');
+  else if (id === 'host-lobby' || id === 'player-wait')          Music.play('lobby');
+  else if (id === 'host-question' || id === 'player-question')   Music.play('question');
+  else if (id === 'host-results' || id === 'player-results' ||
+           id === 'player-answered')                             Music.stop();
+  else if (id === 'podium' || id === 'player-podium')            Music.play('home');
 }
 
 // ─── TOAST ───────────────────────────────────────────────────
@@ -747,6 +762,169 @@ function renderPodium(podiumId, lbId, lb) {
     `;
   }).join('');
   renderLeaderboard(lbId, lb);
+}
+
+// ═══════════════════════════════════════════════════
+//  MUSIC ENGINE — Web Audio API procedural chiptune
+//  100% synthesized, zero copyright issues
+// ═══════════════════════════════════════════════════
+const Music = (() => {
+  let ctx = null, masterGain = null, muted = false;
+  let currentTrack = null, scheduledNodes = [], loopTimeout = null;
+
+  // Note frequencies
+  const N = {
+    C3:130.81,D3:146.83,E3:164.81,F3:174.61,G3:196.00,A3:220.00,B3:246.94,
+    C4:261.63,D4:293.66,E4:329.63,F4:349.23,G4:392.00,A4:440.00,B4:493.88,
+    C5:523.25,D5:587.33,E5:659.25,F5:698.46,G5:783.99,A5:880.00,B5:987.77,
+    _:0 // rest
+  };
+
+  function init() {
+    if (ctx) return;
+    ctx = new (window.AudioContext || window.webkitAudioContext)();
+    masterGain = ctx.createGain();
+    masterGain.gain.value = muted ? 0 : 0.18;
+    masterGain.connect(ctx.destination);
+  }
+
+  function playNote(freq, startTime, duration, type='square', vol=0.4, detune=0) {
+    if (!freq) return null;
+    const osc  = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = type;
+    osc.frequency.value = freq;
+    osc.detune.value = detune;
+    gain.gain.setValueAtTime(0, startTime);
+    gain.gain.linearRampToValueAtTime(vol, startTime + 0.01);
+    gain.gain.setValueAtTime(vol, startTime + duration * 0.7);
+    gain.gain.linearRampToValueAtTime(0, startTime + duration * 0.95);
+    osc.connect(gain);
+    gain.connect(masterGain);
+    osc.start(startTime);
+    osc.stop(startTime + duration);
+    scheduledNodes.push(osc);
+    return osc;
+  }
+
+  function playDrum(type, startTime) {
+    const buf = ctx.createBuffer(1, ctx.sampleRate * 0.15, ctx.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i/data.length, type==='kick'?3:8);
+    const src  = ctx.createBufferSource();
+    const gain = ctx.createGain();
+    const filt = ctx.createBiquadFilter();
+    src.buffer = buf;
+    filt.type = 'lowpass';
+    filt.frequency.value = type === 'kick' ? 180 : 4000;
+    gain.gain.setValueAtTime(type==='kick'?0.9:0.5, startTime);
+    gain.gain.linearRampToValueAtTime(0, startTime + 0.12);
+    src.connect(filt); filt.connect(gain); gain.connect(masterGain);
+    src.start(startTime);
+    scheduledNodes.push(src);
+  }
+
+  // ── TRACK DEFINITIONS ─────────────────────────────
+  const tracks = {
+
+    // HOME: Bright, bouncy, major key — 138 BPM
+    home: () => {
+      const bpm = 138, step = 60/bpm/2;
+      const mel = [N.E5,N.E5,N.G5,N.E5,N.C5,N._,N.D5,N.E5,
+                   N.G5,N.E5,N.D5,N.C5,N.E5,N._,N.C5,N._,
+                   N.A4,N.A4,N.C5,N.A4,N.F4,N._,N.G4,N.A4,
+                   N.C5,N.A4,N.G4,N.F4,N.A4,N._,N.G4,N._];
+      const bass=[N.C3,N._,N.G3,N._,N.A3,N._,N.F3,N._,
+                  N.C3,N._,N.G3,N._,N.F3,N._,N.G3,N._,
+                  N.F3,N._,N.C3,N._,N.F3,N._,N.C3,N._,
+                  N.F3,N._,N.C3,N._,N.G3,N._,N.C3,N._];
+      const kicks=[1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,
+                   1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0];
+      const snare=[0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,
+                   0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0];
+      return { mel, bass, kicks, snare, step, len: mel.length };
+    },
+
+    // LOBBY: Groovy, anticipatory, funky — 112 BPM
+    lobby: () => {
+      const bpm = 112, step = 60/bpm/2;
+      const mel = [N.G4,N._,N.B4,N.D5,N.G5,N._,N.D5,N.B4,
+                   N.A4,N._,N.C5,N.E5,N.A5,N._,N.E5,N.C5,
+                   N.F4,N._,N.A4,N.C5,N.F5,N._,N.C5,N.A4,
+                   N.G4,N._,N.B4,N.D5,N.E5,N.D5,N.B4,N._];
+      const bass=[N.G3,N._,N.G3,N._,N.D3,N._,N.D3,N._,
+                  N.A3,N._,N.A3,N._,N.E3,N._,N.E3,N._,
+                  N.F3,N._,N.F3,N._,N.C3,N._,N.C3,N._,
+                  N.G3,N._,N.G3,N._,N.D3,N._,N.G3,N._];
+      const kicks=[1,0,0,1,0,0,1,0,1,0,0,1,0,0,1,0,
+                   1,0,0,1,0,0,1,0,1,0,0,1,0,0,1,0];
+      const snare=[0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,
+                   0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0];
+      return { mel, bass, kicks, snare, step, len: mel.length };
+    },
+
+    // QUESTION: Tense, urgent, minor key — 165 BPM
+    question: () => {
+      const bpm = 165, step = 60/bpm/2;
+      const mel = [N.A4,N.C5,N.E5,N._,N.A5,N._,N.G5,N.E5,
+                   N.F5,N.E5,N.D5,N._,N.E5,N._,N.C5,N._,
+                   N.A4,N.C5,N.E5,N._,N.G5,N.F5,N.E5,N.D5,
+                   N.E5,N._,N.C5,N.B4,N.A4,N._,N._,N._];
+      const bass=[N.A3,N._,N.A3,N.E3,N.A3,N._,N.G3,N._,
+                  N.F3,N._,N.F3,N.C3,N.E3,N._,N.E3,N._,
+                  N.A3,N._,N.A3,N.E3,N.G3,N._,N.F3,N._,
+                  N.E3,N._,N.E3,N.B2,N.A2,N._,N.A2,N._];
+      const kicks=[1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,
+                   1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0];
+      const snare=[0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,
+                   0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0];
+      return { mel, bass, kicks, snare, step, len: mel.length };
+    }
+  };
+
+  function scheduleLoop(trackName, startTime) {
+    if (currentTrack !== trackName) return;
+    const t = tracks[trackName]();
+    for (let i = 0; i < t.len; i++) {
+      const s = startTime + i * t.step;
+      playNote(t.mel[i],  s, t.step * 0.85, 'square',   0.35);
+      playNote(t.bass[i], s, t.step * 1.8,  'sawtooth', 0.18, -5);
+      if (t.kicks[i]) playDrum('kick', s);
+      if (t.snare[i]) playDrum('snare', s);
+    }
+    const loopEnd = startTime + t.len * t.step;
+    const msUntilNext = (loopEnd - ctx.currentTime) * 1000 - 100;
+    loopTimeout = setTimeout(() => scheduleLoop(trackName, loopEnd), Math.max(0, msUntilNext));
+  }
+
+  function play(trackName) {
+    if (currentTrack === trackName) return;
+    stop();
+    init();
+    if (ctx.state === 'suspended') ctx.resume();
+    currentTrack = trackName;
+    scheduleLoop(trackName, ctx.currentTime + 0.05);
+  }
+
+  function stop() {
+    currentTrack = null;
+    clearTimeout(loopTimeout);
+    scheduledNodes.forEach(n => { try { n.stop(); } catch(e){} });
+    scheduledNodes = [];
+  }
+
+  function setMuted(m) {
+    muted = m;
+    if (masterGain) masterGain.gain.linearRampToValueAtTime(m ? 0 : 0.18, (ctx||{currentTime:0}).currentTime + 0.1);
+  }
+
+  return { play, stop, setMuted, get muted() { return muted; } };
+})();
+
+function toggleMute() {
+  const m = !Music.muted;
+  Music.setMuted(m);
+  document.getElementById('mute-btn').textContent = m ? '🔇' : '🔊';
 }
 
 // ─── INIT ─────────────────────────────────────────────────────
