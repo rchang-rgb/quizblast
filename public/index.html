@@ -197,13 +197,21 @@
 <canvas id="bg-canvas"></canvas>
 <div id="toast"></div>
 
-<!-- Mute button -->
-<button id="mute-btn" onclick="toggleMute()" title="Toggle music" style="
+<!-- Music controls -->
+<div style="
   position:fixed;bottom:20px;right:20px;z-index:9999;
-  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);
-  color:#fff;border-radius:50%;width:44px;height:44px;font-size:1.3rem;
-  cursor:pointer;backdrop-filter:blur(10px);transition:background .2s;
-">🔊</button>
+  display:flex;align-items:center;gap:8px;
+  background:rgba(15,20,50,.75);border:1px solid rgba(255,255,255,.15);
+  border-radius:30px;padding:8px 14px;backdrop-filter:blur(12px);
+">
+  <button id="mute-btn" onclick="toggleMute()" title="Toggle music" style="
+    background:none;border:none;color:#fff;font-size:1.2rem;cursor:pointer;
+    padding:0;width:24px;text-align:center;flex-shrink:0;
+  ">🔊</button>
+  <input id="vol-slider" type="range" min="0" max="100" value="18"
+    oninput="setVolume(this.value)"
+    style="width:90px;accent-color:#3498db;cursor:pointer;" />
+</div>
 
 <!-- ════════════════ HOME ════════════════ -->
 <div id="home" class="screen">
@@ -918,13 +926,20 @@ const Music = (() => {
     if (masterGain) masterGain.gain.linearRampToValueAtTime(m ? 0 : 0.18, (ctx||{currentTime:0}).currentTime + 0.1);
   }
 
-  return { play, stop, setMuted, get muted() { return muted; } };
+  return { play, stop, setMuted, get muted() { return muted; }, get masterGain() { return masterGain; }, get ctx() { return ctx; } };
 })();
 
 function toggleMute() {
   const m = !Music.muted;
   Music.setMuted(m);
   document.getElementById('mute-btn').textContent = m ? '🔇' : '🔊';
+  document.getElementById('vol-slider').disabled = m;
+}
+
+function setVolume(val) {
+  const v = val / 100;
+  if (Music.masterGain) Music.masterGain.gain.linearRampToValueAtTime(v, Music.ctx.currentTime + 0.05);
+  document.getElementById('mute-btn').textContent = v === 0 ? '🔇' : '🔊';
 }
 
 // ─── INIT ─────────────────────────────────────────────────────
