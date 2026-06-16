@@ -115,10 +115,28 @@ io.on('connection', (socket) => {
     const answered = Object.values(game.players).filter(p => p.answers[game.currentQ] !== undefined).length;
     io.to(game.hostSocket).emit('host:answer_count', { answered, total: Object.keys(game.players).length });
 
-    // Auto-end if everyone answered
+    // Notify host when everyone answered (host manually reveals results)
     if (answered === Object.keys(game.players).length) {
-      endQuestion(pin);
+      io.to(game.hostSocket).emit('host:all_answered', { total: answered });
     }
+  });
+
+  // HOST manually reveals results (replaces auto-end)
+  socket.on('host:reveal_results', ({ pin }) => {
+    const game = games[pin];
+    if (!game || socket.id !== game.hostSocket) return;
+    endQuestion(pin);
+  });
+
+  // HOST awards tiebreaker 2000 pts to a named player then ends game
+  socket.on('host:tiebreaker_award', ({ pin, winnerName }) => {
+    const game = games[pin];
+    if (!game || socket.id !== game.hostSocket) return;
+    const winner = Object.values(game.players).find(p => p.name === winnerName);
+    if (winner) winner.score += 2000;
+    game.phase = 'podium';
+    const sorted = Object.values(game.players).sort((a, b) => b.score - a.score).slice(0, 10);
+    io.to(pin).emit('game:podium', { leaderboard: sorted });
   });
 
   socket.on('disconnect', () => {
@@ -170,16 +188,18 @@ function nextQuestion(pin) {
     }
   });
 
-  // Tick timer
-  const tick = setInterval(() => {
-    game.timeLeft--;
-    io.to(pin).emit('game:tick', { timeLeft: game.timeLeft, duration });
-    if (game.timeLeft <= 0) {
-      clearInterval(tick);
-      endQuestion(pin);
-    }
-  }, 1000);
-  game.questionTimer = tick;
+  // Tick timer (skip for tiebreaker questions with time:0)
+  if (duration > 0) {
+    const tick = setInterval(() => {
+      game.timeLeft--;
+      io.to(pin).emit('game:tick', { timeLeft: game.timeLeft, duration });
+      if (game.timeLeft <= 0) {
+        clearInterval(tick);
+        endQuestion(pin);
+      }
+    }, 1000);
+    game.questionTimer = tick;
+  }
 }
 
 function endQuestion(pin) {

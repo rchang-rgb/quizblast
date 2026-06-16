@@ -292,6 +292,13 @@
     <div class="q-text" id="hq-text">Question text here</div>
     <div class="answer-grid" id="hq-answers"></div>
     <div class="answer-count" id="hq-count">Waiting for answers... <strong>0</strong></div>
+    <button class="btn btn-gold btn-xl mt-24" id="hq-reveal-btn" style="display:none" onclick="hostReveal()">Reveal Results &#x25B6;</button>
+    <div id="hq-tiebreaker-panel" style="display:none;margin-top:20px;text-align:center;">
+      <p style="color:var(--sub);margin-bottom:8px;">Type the winner's name to award 2000 bonus points:</p>
+      <input id="hq-winner-input" type="text" placeholder="Winner name..." style="padding:10px 16px;border-radius:8px;border:none;font-size:1rem;margin-bottom:12px;width:240px;background:var(--card);color:var(--text);">
+      <br>
+      <button class="btn btn-gold btn-xl" onclick="hostTiebreakerAward()">Award 2000 pts &amp; End Game &#x1F3C6;</button>
+    </div>
   </div>
 </div>
 
@@ -509,7 +516,7 @@ function loadPresentationQuiz() {
       text: "What does this GIF represent?",
       options: ["You did something stupid", "This is awkward, idk how to respond", "You're acting idiotically", "It is way too hot out today"],
       image: "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHU4dWVkbDhyd2FkcTdrdTZ5ajhvdnkzeXdvaTMyMXBtOXY5ZmxiaCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/19GIHDk6wuw9HVGsiM/giphy.gif",
-      correct: 1, time: 20
+      correct: 2, time: 20
     },
     {
       text: "If you are better than someone, what are you considered?",
@@ -529,7 +536,7 @@ function loadPresentationQuiz() {
     {
       text: "Which of the following is the correct term for acting fake?",
       options: ["Performative", "Larping", "Goblining", "Vibefarming"],
-      correct: 1, time: 20
+      correct: [0, 1], time: 20
     },
     {
       text: "You see a high schooler hit a backflip on a scooter. What do you say?",
@@ -539,7 +546,7 @@ function loadPresentationQuiz() {
     {
       text: "What's the best way to make your friend dislike you after a boring story?",
       options: ["Chills bro, chills", "Wapicada bro", "That's tough", "No way, that's crazyyy"],
-      correct: 2, time: 20
+      correct: 0, time: 20
     },
     {
       text: "What would you call someone who doesn't mog?",
@@ -554,7 +561,7 @@ function loadPresentationQuiz() {
     {
       text: "Your coworker just got a massive promotion out of nowhere. Best slang response?",
       options: ["That's so fried bro", "He really mogged the whole office", "What a chud move", "He's larping as a manager"],
-      correct: 1, time: 20
+      correct: 3, time: 20
     },
     {
       text: "What does it mean when someone says \"you're cooked\"? (not in the slides!)",
@@ -569,8 +576,7 @@ function loadPresentationQuiz() {
     },
     {
       text: "TIE BREAKER! Best example using the slang word: MOUSE",
-      options: ["\"I'm so mouse right now\"", "\"That presentation was so mouse\"", "\"He moused the whole room\"", "\"Stop mousing around\""],
-      correct: 0, time: 20
+      options: [], tiebreaker: true, correct: 0, time: 0
     },
   ];
   renderQuestionList();
@@ -616,6 +622,16 @@ function startGame() {
 
 function hostNext() {
   socket.emit('host:next', { pin: myPin });
+}
+
+function hostReveal() {
+  socket.emit('host:reveal_results', { pin: myPin });
+}
+
+function hostTiebreakerAward() {
+  const name = document.getElementById('hq-winner-input').value.trim();
+  if (!name) { toast('Enter a winner name first'); return; }
+  socket.emit('host:tiebreaker_award', { pin: myPin, winnerName: name });
 }
 
 function renderAnswers(containerId, options, clickable, onAnswer) {
@@ -723,11 +739,28 @@ socket.on('host:question', ({ question, index, total, duration }) => {
   const hGif = document.getElementById('hq-gif');
   if (question.image) { hGif.innerHTML = `<img src="${question.image}" alt=""/>`; hGif.style.display = 'flex'; }
   else { hGif.innerHTML = ''; hGif.style.display = 'none'; }
-  document.getElementById('hq-timer').textContent = duration;
-  document.getElementById('hq-bar').style.width = '100%';
-  document.getElementById('hq-count').innerHTML = 'Answers: <strong>0</strong>';
-  renderAnswers('hq-answers', question.options, false);
+  document.getElementById('hq-reveal-btn').style.display = 'none';
+  document.getElementById('hq-tiebreaker-panel').style.display = 'none';
+  document.getElementById('hq-winner-input').value = '';
+  const isTiebreaker = duration === 0;
+  document.getElementById('hq-timer').style.display = isTiebreaker ? 'none' : '';
+  document.querySelector('.timer-wrap').style.display = isTiebreaker ? 'none' : '';
+  document.getElementById('hq-count').style.display = isTiebreaker ? 'none' : '';
+  if (isTiebreaker) {
+    document.getElementById('hq-answers').innerHTML = '';
+    document.getElementById('hq-tiebreaker-panel').style.display = 'block';
+  } else {
+    document.getElementById('hq-timer').textContent = duration;
+    document.getElementById('hq-bar').style.width = '100%';
+    document.getElementById('hq-count').innerHTML = 'Answers: <strong>0</strong>';
+    renderAnswers('hq-answers', question.options, false);
+  }
   showScreen('host-question');
+});
+
+socket.on('host:all_answered', ({ total }) => {
+  document.getElementById('hq-count').innerHTML = `All <strong>${total}</strong> players answered! Ready to reveal.`;
+  document.getElementById('hq-reveal-btn').style.display = 'inline-block';
 });
 
 socket.on('player:question', ({ question, index, duration }) => {
