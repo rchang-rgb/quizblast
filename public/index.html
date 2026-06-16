@@ -1,13 +1,12 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>QuizBlast ðŸŽ®</title>
+  <title>QuizBlast</title>
   <script src="/socket.io/socket.io.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <style>
-    /* â”€â”€â”€ RESET & BASE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
       --c1: #e74c3c; --c2: #3498db; --c3: #2ecc71; --c4: #f39c12;
@@ -19,23 +18,18 @@
     button { cursor: pointer; border: none; outline: none; font-family: inherit; }
     input  { outline: none; font-family: inherit; }
 
-    /* â”€â”€â”€ ANIMATED BACKGROUND â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     #bg-canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
 
-    /* â”€â”€â”€ SCREEN SYSTEM â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     .screen { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1; padding: 20px; transition: opacity .4s, transform .4s; }
     .screen.hidden { opacity: 0; pointer-events: none; transform: scale(.96); }
 
-    /* â”€â”€â”€ LOGO â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     .logo { font-size: clamp(2.5rem, 8vw, 5rem); font-weight: 900; letter-spacing: -2px; background: linear-gradient(135deg, #e74c3c, #f39c12, #2ecc71, #3498db); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; filter: drop-shadow(0 0 20px rgba(255,200,0,.3)); animation: pulse 3s ease-in-out infinite; }
     @keyframes pulse { 0%,100% { filter: drop-shadow(0 0 20px rgba(255,200,0,.3)); } 50% { filter: drop-shadow(0 0 40px rgba(255,200,0,.6)); } }
     .logo-sub { color: var(--sub); font-size: 1rem; letter-spacing: 4px; text-transform: uppercase; margin-top: 4px; }
 
-    /* â”€â”€â”€ CARDS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     .card { background: var(--card); border-radius: var(--radius); padding: 32px; box-shadow: var(--shadow); border: 1px solid rgba(255,255,255,.07); width: 100%; max-width: 460px; }
     .card h2 { font-size: 1.4rem; margin-bottom: 20px; }
 
-    /* â”€â”€â”€ INPUTS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     .input-group { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
     input[type=text], input[type=number], textarea, select {
       background: rgba(255,255,255,.07); border: 2px solid rgba(255,255,255,.12);
@@ -46,7 +40,6 @@
     textarea { resize: vertical; min-height: 80px; }
     label { font-size: .85rem; color: var(--sub); margin-bottom: 4px; }
 
-    /* â”€â”€â”€ BUTTONS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     .btn { padding: 14px 28px; border-radius: 12px; font-size: 1rem; font-weight: 700; transition: transform .15s, box-shadow .15s, opacity .2s; letter-spacing: .5px; }
     .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,.4); }
     .btn:active { transform: translateY(0); }
@@ -61,10 +54,8 @@
     .btn-home-row { display: flex; gap: 16px; margin-top: 24px; }
     .btn-home-row .btn { flex: 1; text-align: center; font-size: 1.1rem; padding: 20px; border-radius: 16px; }
 
-    /* â”€â”€â”€ HOME â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     #home .logo-wrap { text-align: center; margin-bottom: 40px; }
 
-    /* â”€â”€â”€ LOBBY (HOST) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     .pin-display { font-size: clamp(3rem, 10vw, 5rem); font-weight: 900; letter-spacing: 8px; color: #f39c12; text-align: center; text-shadow: 0 0 30px rgba(243,156,18,.4); }
     .pin-label { text-align: center; color: var(--sub); font-size: .9rem; margin-bottom: 8px; letter-spacing: 3px; text-transform: uppercase; }
     #qr-code { display: flex; justify-content: center; margin: 14px 0 6px; }
@@ -76,7 +67,6 @@
     .player-chip { background: rgba(255,255,255,.1); border-radius: 20px; padding: 6px 14px; font-size: .85rem; font-weight: 600; animation: chipIn .3s ease; border: 1px solid rgba(255,255,255,.15); }
     @keyframes chipIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
-    /* â”€â”€â”€ QUESTION BUILDER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     .q-list { display: flex; flex-direction: column; gap: 10px; max-height: 300px; overflow-y: auto; margin-bottom: 16px; }
     .q-item { background: rgba(255,255,255,.06); border-radius: 10px; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; gap: 12px; font-size: .9rem; }
     .q-item span { flex: 1; }
@@ -86,7 +76,6 @@
     .correct-btn { padding: 8px 12px; border-radius: 8px; font-size: .75rem; font-weight: 700; border: 2px solid rgba(255,255,255,.2); background: rgba(255,255,255,.06); color: var(--sub); transition: all .2s; }
     .correct-btn.selected { background: #2ecc71; border-color: #2ecc71; color: #fff; }
 
-    /* â”€â”€â”€ QUESTION DISPLAY (HOST) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     .q-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
     .q-number { color: var(--sub); font-size: .9rem; }
     .q-text { font-size: clamp(1.2rem, 3vw, 2rem); font-weight: 700; text-align: center; margin: 24px 0; line-height: 1.3; }
@@ -103,7 +92,6 @@
     .answer-btn.wrong   { opacity: .4; }
     .answer-btn.disabled { pointer-events: none; }
 
-    /* â”€â”€â”€ TIMER BAR â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     .timer-wrap { width: 100%; max-width: 700px; margin: 8px 0 20px; }
     .timer-bar-bg { background: rgba(255,255,255,.1); border-radius: 999px; height: 12px; overflow: hidden; }
     .timer-bar { height: 100%; border-radius: 999px; transition: width 1s linear, background .5s; background: #2ecc71; }
@@ -111,7 +99,6 @@
     .timer-text.urgent { color: #e74c3c; animation: shake .1s infinite; }
     @keyframes shake { 0%,100%{transform:translateX(0)} 50%{transform:translateX(3px)} }
 
-    /* â”€â”€â”€ RESULTS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     .stat-bars { display: flex; gap: 8px; align-items: flex-end; height: 120px; margin: 20px 0; justify-content: center; }
     .stat-bar-wrap { display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 1; max-width: 80px; }
     .stat-bar { width: 100%; border-radius: 8px 8px 0 0; min-height: 4px; transition: height .6s ease; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 4px; font-weight: 700; font-size: .8rem; color: rgba(255,255,255,.8); }
@@ -128,12 +115,10 @@
     .lb-name { flex: 1; font-weight: 600; }
     .lb-score { font-weight: 800; color: #f39c12; }
 
-    /* â”€â”€â”€ PLAYER WAITING â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     .waiting-anim { font-size: 4rem; animation: bounce 1s ease-in-out infinite; }
     @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
     .player-name-badge { background: linear-gradient(135deg, #3498db, #2980b9); border-radius: 14px; padding: 12px 28px; font-size: 1.5rem; font-weight: 800; margin: 16px 0; }
 
-    /* â”€â”€â”€ PLAYER ANSWER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     .player-answer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; width: 100%; max-width: 480px; }
     .p-answer-btn { padding: 0; border-radius: 16px; font-size: 1.5rem; font-weight: 800; color: #fff; aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; transition: transform .1s, box-shadow .2s; box-shadow: 0 4px 16px rgba(0,0,0,.3); }
     .p-answer-btn:hover { transform: scale(1.04); }
@@ -147,13 +132,11 @@
     .p-answer-btn .p-text { font-size: .7rem; padding: 0 8px; text-align: center; opacity: .9; }
     .p-answer-btn:disabled { opacity: .5; cursor: not-allowed; }
 
-    /* â”€â”€â”€ RESULT FEEDBACK â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     .feedback-icon { font-size: 6rem; animation: popIn .4s cubic-bezier(.175,.885,.32,1.275); }
     @keyframes popIn { from{transform:scale(0) rotate(-20deg);opacity:0} to{transform:scale(1) rotate(0);opacity:1} }
     .feedback-pts { font-size: 2.5rem; font-weight: 900; color: #f39c12; animation: popIn .4s .15s both cubic-bezier(.175,.885,.32,1.275); }
     .feedback-label { color: var(--sub); font-size: .9rem; }
 
-    /* â”€â”€â”€ PODIUM â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     .podium-wrap { display: flex; align-items: flex-end; justify-content: center; gap: 16px; margin: 32px 0 24px; }
     .podium-col { display: flex; flex-direction: column; align-items: center; gap: 8px; }
     .podium-avatar { width: 64px; height: 64px; border-radius: 50%; font-size: 1.8rem; display: flex; align-items: center; justify-content: center; border: 3px solid rgba(255,255,255,.3); }
@@ -166,24 +149,19 @@
     .confetti-emoji { font-size: 2rem; animation: confettiDrop 2s ease-in-out infinite alternate; display: inline-block; }
     @keyframes confettiDrop { from{transform:translateY(0) rotate(0)} to{transform:translateY(10px) rotate(15deg)} }
 
-    /* â”€â”€â”€ TOAST â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     #toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: #e74c3c; color: #fff; padding: 12px 24px; border-radius: 12px; font-weight: 600; z-index: 9999; transition: transform .3s; pointer-events: none; }
     #toast.show { transform: translateX(-50%) translateY(0); }
 
-    /* â”€â”€â”€ ANSWER COUNT BADGE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     .answer-count { text-align: center; font-size: 1rem; color: var(--sub); margin-top: 8px; }
     .answer-count strong { color: #2ecc71; font-size: 1.3rem; }
 
-    /* â”€â”€â”€ SCROLLBAR â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: rgba(255,255,255,.15); border-radius: 3px; }
 
-    /* â”€â”€â”€ RESPONSIVE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     @media (max-width: 600px) {
       .answer-grid, .player-answer-grid { grid-template-columns: 1fr 1fr; }
       .btn-home-row { flex-direction: column; }
     }
 
-    /* â”€â”€â”€ UTILITY â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     .text-center { text-align: center; }
     .mt-8  { margin-top: 8px; }
     .mt-16 { margin-top: 16px; }
@@ -207,48 +185,48 @@
   <button id="mute-btn" onclick="toggleMute()" title="Toggle music" style="
     background:none;border:none;color:#fff;font-size:1.2rem;cursor:pointer;
     padding:0;width:24px;text-align:center;flex-shrink:0;
-  ">ðŸ”Š</button>
+  ">Vol</button>
   <input id="vol-slider" type="range" min="0" max="100" value="18"
     oninput="setVolume(this.value)"
     style="width:90px;accent-color:#3498db;cursor:pointer;" />
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• HOME â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- HOME -->
 <div id="home" class="screen">
   <div class="logo-wrap">
     <div class="logo">QuizBlast</div>
-    <div class="logo-sub">âš¡ Multiplayer Quiz Battle</div>
+    <div class="logo-sub">Multiplayer Quiz Battle</div>
   </div>
   <div class="card text-center" style="max-width:500px">
     <p style="color:var(--sub);margin-bottom:8px;">Up to 100 players per lobby</p>
     <div class="btn-home-row">
-      <button class="btn btn-gold btn-xl" onclick="showScreen('join')">ðŸŽ® Join Game</button>
-      <button class="btn btn-primary btn-xl" onclick="showScreen('host-setup')">ðŸŽ¤ Host Game</button>
+      <button class="btn btn-gold btn-xl" onclick="showScreen('join')">Join Game</button>
+      <button class="btn btn-primary btn-xl" onclick="showScreen('host-setup')">Host Game</button>
     </div>
   </div>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• JOIN â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- JOIN -->
 <div id="join" class="screen hidden">
   <div class="logo" style="font-size:2.5rem;margin-bottom:24px;">QuizBlast</div>
   <div class="card">
-    <h2>ðŸŽ® Join a Game</h2>
+    <h2>Join a Game</h2>
     <div class="input-group">
       <label>Game PIN</label>
       <input type="text" id="join-pin" placeholder="Enter 6-digit PIN" maxlength="6" inputmode="numeric" style="font-size:2rem;letter-spacing:6px;text-align:center;font-weight:800;" />
       <label>Your Nickname</label>
       <input type="text" id="join-name" placeholder="Enter your name" maxlength="20" />
     </div>
-    <button class="btn btn-gold btn-full btn-xl" onclick="joinGame()">Let's Go! ðŸš€</button>
-    <button class="btn btn-full mt-8" style="background:rgba(255,255,255,.06);color:var(--sub)" onclick="showScreen('home')">â† Back</button>
+    <button class="btn btn-gold btn-full btn-xl" onclick="joinGame()">Let's Go!</button>
+    <button class="btn btn-full mt-8" style="background:rgba(255,255,255,.06);color:var(--sub)" onclick="showScreen('home')">&larr; Back</button>
   </div>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• HOST SETUP â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- HOST SETUP -->
 <div id="host-setup" class="screen hidden">
   <div style="width:100%;max-width:700px;max-height:90vh;overflow-y:auto;padding:4px;">
     <div class="card" style="max-width:100%">
-      <h2>ðŸŽ¤ Create Your Quiz</h2>
+      <h2>Create Your Quiz</h2>
 
       <!-- Question builder -->
       <div style="background:rgba(255,255,255,.04);border-radius:12px;padding:20px;margin-bottom:20px;">
@@ -272,17 +250,17 @@
       <div class="flex-gap" style="justify-content:space-between;align-items:center;">
         <span id="q-count-label" style="color:var(--sub);font-size:.9rem;">0 questions</span>
         <div class="flex-gap">
-          <button class="btn btn-gold" onclick="loadPresentationQuiz()" style="font-size:.85rem;padding:10px 16px">âš¡ Load Presentation Quiz</button>
+          <button class="btn btn-gold" onclick="loadPresentationQuiz()" style="font-size:.85rem;padding:10px 16px">Load Presentation Quiz</button>
           <button class="btn btn-primary" onclick="loadSampleQuestions()" style="font-size:.85rem;padding:10px 16px">Load Sample Quiz</button>
-          <button class="btn btn-success btn-xl" id="create-btn" onclick="createGame()" disabled>Create Lobby ðŸš€</button>
+          <button class="btn btn-success btn-xl" id="create-btn" onclick="createGame()" disabled>Create Lobby!</button>
         </div>
       </div>
-      <button class="btn btn-full mt-8" style="background:rgba(255,255,255,.06);color:var(--sub)" onclick="showScreen('home')">â† Back</button>
+      <button class="btn btn-full mt-8" style="background:rgba(255,255,255,.06);color:var(--sub)" onclick="showScreen('home')">&larr; Back</button>
     </div>
   </div>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• HOST LOBBY â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- HOST LOBBY -->
 <div id="host-lobby" class="screen hidden">
   <div class="card" style="max-width:540px;width:100%">
     <div class="pin-label">GAME PIN</div>
@@ -292,12 +270,12 @@
     <div class="player-count">Players joined: <span id="lobby-count">0</span></div>
     <div class="player-grid" id="lobby-players"></div>
     <div class="divider"></div>
-    <button class="btn btn-success btn-full btn-xl" id="start-btn" onclick="startGame()">Start Game â–¶</button>
+    <button class="btn btn-success btn-full btn-xl" id="start-btn" onclick="startGame()">Start Game &#x25B6;</button>
     <p style="text-align:center;color:var(--sub);font-size:.8rem;margin-top:12px;">Ask players to go to this page and enter the PIN</p>
   </div>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• HOST QUESTION â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- HOST QUESTION -->
 <div id="host-question" class="screen hidden">
   <div style="width:100%;max-width:760px;display:flex;flex-direction:column;align-items:center;">
     <div class="q-header" style="width:100%;">
@@ -310,46 +288,46 @@
     </div>
     <div class="q-text" id="hq-text">Question text here</div>
     <div class="answer-grid" id="hq-answers"></div>
-    <div class="answer-count" id="hq-count">Waiting for answersâ€¦ <strong>0</strong></div>
+    <div class="answer-count" id="hq-count">Waiting for answers... <strong>0</strong></div>
   </div>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• HOST RESULTS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- HOST RESULTS -->
 <div id="host-results" class="screen hidden">
   <div style="width:100%;max-width:700px;display:flex;flex-direction:column;align-items:center;">
-    <h2 style="margin-bottom:8px;">Results ðŸ“Š</h2>
+    <h2 style="margin-bottom:8px;">Results</h2>
     <div class="stat-bars" id="hr-bars"></div>
     <div class="leaderboard" id="hr-leaderboard"></div>
-    <button class="btn btn-gold btn-xl mt-24" onclick="hostNext()">Next Question â–¶</button>
+    <button class="btn btn-gold btn-xl mt-24" onclick="hostNext()">Next Question &#x25B6;</button>
   </div>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• PODIUM â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- PODIUM -->
 <div id="podium" class="screen hidden">
   <div style="text-align:center;max-width:600px;width:100%">
     <div style="font-size:2rem;margin-bottom:8px;">
-      <span class="confetti-emoji">ðŸŽ‰</span>
-      <span class="confetti-emoji" style="animation-delay:.2s">ðŸ†</span>
-      <span class="confetti-emoji" style="animation-delay:.4s">ðŸŽ‰</span>
+      <span class="confetti-emoji">*</span>
+      <span class="confetti-emoji" style="animation-delay:.2s">*</span>
+      <span class="confetti-emoji" style="animation-delay:.4s">*</span>
     </div>
     <h1 style="font-size:2.5rem;margin-bottom:4px;">Game Over!</h1>
     <div class="podium-wrap" id="podium-display"></div>
     <div class="leaderboard" id="podium-lb"></div>
-    <button class="btn btn-primary btn-xl mt-24" onclick="showScreen('home')">Play Again ðŸ”„</button>
+    <button class="btn btn-primary btn-xl mt-24" onclick="showScreen('home')">Play Again!</button>
   </div>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• PLAYER WAITING â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- PLAYER WAITING -->
 <div id="player-wait" class="screen hidden">
   <div class="text-center">
-    <div class="waiting-anim">ðŸŽ®</div>
+    <div class="waiting-anim">:)</div>
     <div class="player-name-badge" id="pw-name">Player</div>
-    <p style="color:var(--sub);">You're in! Waiting for host to startâ€¦</p>
+    <p style="color:var(--sub);">You're in! Waiting for host to start...</p>
     <p style="color:var(--sub);font-size:.8rem;margin-top:8px;">PIN: <strong id="pw-pin" style="color:#f39c12">------</strong></p>
   </div>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• PLAYER QUESTION â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- PLAYER QUESTION -->
 <div id="player-question" class="screen hidden">
   <div style="width:100%;max-width:480px;display:flex;flex-direction:column;align-items:center;gap:16px;">
     <div class="timer-text" id="pq-timer">20</div>
@@ -361,38 +339,37 @@
   </div>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• PLAYER ANSWERED â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- PLAYER ANSWERED -->
 <div id="player-answered" class="screen hidden">
   <div class="text-center">
-    <div class="feedback-icon" id="pa-icon">â³</div>
+    <div class="feedback-icon" id="pa-icon">...</div>
     <div class="feedback-pts" id="pa-pts"></div>
-    <div class="feedback-label" id="pa-label">Waiting for othersâ€¦</div>
+    <div class="feedback-label" id="pa-label">Waiting for others...</div>
   </div>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• PLAYER RESULTS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- PLAYER RESULTS -->
 <div id="player-results" class="screen hidden">
   <div class="text-center" style="max-width:400px;width:100%">
-    <h2 style="margin-bottom:16px;">Leaderboard ðŸ†</h2>
+    <h2 style="margin-bottom:16px;">Leaderboard</h2>
     <div class="leaderboard" id="pr-leaderboard"></div>
-    <p style="color:var(--sub);margin-top:16px;font-size:.9rem;">Next question coming upâ€¦</p>
+    <p style="color:var(--sub);margin-top:16px;font-size:.9rem;">Next question coming up...</p>
   </div>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• PLAYER PODIUM â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- PLAYER PODIUM -->
 <div id="player-podium" class="screen hidden">
   <div style="text-align:center;max-width:400px;width:100%">
     <div style="font-size:2.5rem;margin-bottom:12px;">
-      <span class="confetti-emoji">ðŸŽŠ</span> <span class="confetti-emoji" style="animation-delay:.3s">ðŸ†</span> <span class="confetti-emoji" style="animation-delay:.6s">ðŸŽŠ</span>
+      <span class="confetti-emoji">*</span> <span class="confetti-emoji" style="animation-delay:.3s">*</span> <span class="confetti-emoji" style="animation-delay:.6s">*</span>
     </div>
     <h2>Game Over!</h2>
     <div class="leaderboard mt-16" id="pp-leaderboard"></div>
-    <button class="btn btn-primary btn-xl mt-24" onclick="showScreen('home')">Play Again ðŸ”„</button>
+    <button class="btn btn-primary btn-xl mt-24" onclick="showScreen('home')">Play Again!</button>
   </div>
 </div>
 
 <script>
-// â”€â”€â”€ SOCKET â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const socket = io({ transports: ['websocket', 'polling'] });
 let myRole = null;  // 'host' | 'player'
 let myPin  = null;
@@ -401,7 +378,6 @@ let currentQuestions = [];
 let correctAnswer = null;
 let questionDuration = 20;
 
-// â”€â”€â”€ BACKGROUND CANVAS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 (function() {
   const canvas = document.getElementById('bg-canvas');
   const ctx    = canvas.getContext('2d');
@@ -432,7 +408,6 @@ let questionDuration = 20;
   draw();
 })();
 
-// â”€â”€â”€ SCREEN MANAGER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
   document.getElementById(id).classList.remove('hidden');
@@ -445,7 +420,6 @@ function showScreen(id) {
   else if (id === 'podium' || id === 'player-podium')            Music.play('home');
 }
 
-// â”€â”€â”€ TOAST â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function toast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
@@ -454,12 +428,10 @@ function toast(msg) {
   t._t = setTimeout(() => t.classList.remove('show'), 3000);
 }
 
-// â”€â”€â”€ SHAPES / COLORS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-const SHAPES = ['â–²', 'â—†', 'â—', 'â– '];
+const SHAPES = ['&#x25B2;', '&#x25C6;', '&#x25CF;', '&#x25A0;'];
 const COLORS = ['#e74c3c', '#3498db', '#2ecc71', '#f39c12'];
-const SHAPE_EMOJIS = ['ðŸ”º','ðŸ’Ž','ðŸ”µ','â¬›'];
+const SHAPE_EMOJIS = ['A','B','C','D'];
 
-// â”€â”€â”€ HOST SETUP â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 let questions = [];
 let correctIndex = 0;
 let optionValues = ['', '', '', ''];
@@ -508,7 +480,7 @@ function renderQuestionList() {
     <div class="q-item">
       <span>${i+1}. ${q.text}</span>
       <span class="tag">${q.time}s</span>
-      <button class="q-del" onclick="deleteQ(${i})">âœ•</button>
+      <button class="q-del" onclick="deleteQ(${i})">X</button>
     </div>
   `).join('');
   document.getElementById('q-count-label').textContent = `${questions.length} question${questions.length!==1?'s':''}`;
@@ -526,17 +498,17 @@ function loadPresentationQuiz() {
     },
     {
       text: "True or False: GIFs are now appropriate",
-      options: ["True â€” when used appropriately", "False â€” ew no, always cringe", "", ""],
+      options: ["True - when used appropriately", "False - ew no, always cringe", "", ""],
       correct: 0, time: 20
     },
     {
-      text: "What does this GIF represent? ðŸ˜¬ [Show GIF on screen]",
+      text: "What does this GIF represent? [Show GIF on screen]",
       options: ["You did something stupid", "This is awkward, idk how to respond", "You're acting idiotically", "It is way too hot out today"],
       correct: 1, time: 20
     },
     {
       text: "If you are better than someone, what are you considered?",
-      options: ["Touse â€” top", "Bouse â€” best", "Mouse â€” more", "Bouse â€” beautiful"],
+      options: ["Touse - top", "Bouse - best", "Mouse - more", "Bouse - beautiful"],
       correct: 0, time: 20
     },
     {
@@ -585,18 +557,18 @@ function loadPresentationQuiz() {
       correct: 1, time: 20
     },
     {
-      text: "What would you use this GIF for? ðŸ˜¤ [Show GIF on screen]",
+      text: "What would you use this GIF for? [Show GIF on screen]",
       options: ["Your food was already eaten from the fridge", "You were super excited but came out disappointed", "The fridge was warm when you opened it", "Your food had expired when you went to eat it"],
       correct: 1, time: 20
     },
     {
-      text: "ðŸ† TIE BREAKER! Best example using the slang word: MOUSE",
+      text: "TIE BREAKER! Best example using the slang word: MOUSE",
       options: ["\"I'm so mouse right now\"", "\"That presentation was so mouse\"", "\"He moused the whole room\"", "\"Stop mousing around\""],
       correct: 0, time: 20
     },
   ];
   renderQuestionList();
-  toast('Presentation quiz loaded! 15 questions ready âš¡');
+  toast('Presentation quiz loaded! 15 questions ready.');
 }
 
 function loadSampleQuestions() {
@@ -605,7 +577,7 @@ function loadSampleQuestions() {
     { text: "How many sides does a hexagon have?", options: ["5", "6", "7", "8"], correct: 1, time: 15 },
     { text: "What planet is closest to the Sun?", options: ["Venus", "Earth", "Mercury", "Mars"], correct: 2, time: 20 },
     { text: "Who painted the Mona Lisa?", options: ["Van Gogh", "Picasso", "Da Vinci", "Rembrandt"], correct: 2, time: 20 },
-    { text: "What is 7 Ã— 8?", options: ["54", "56", "58", "64"], correct: 1, time: 15 },
+    { text: "What is 7 x 8?", options: ["54", "56", "58", "64"], correct: 1, time: 15 },
     { text: "Which element has the symbol 'O'?", options: ["Gold", "Oxygen", "Osmium", "Oganesson"], correct: 1, time: 20 },
     { text: "What is the largest ocean on Earth?", options: ["Atlantic", "Indian", "Arctic", "Pacific"], correct: 3, time: 20 },
     { text: "In what year did World War II end?", options: ["1943", "1944", "1945", "1946"], correct: 2, time: 20 },
@@ -622,7 +594,6 @@ function createGame() {
   socket.emit('host:create', { questions, playerLimit: 100 });
 }
 
-// â”€â”€â”€ JOIN GAME â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function joinGame() {
   const pin  = document.getElementById('join-pin').value.trim();
   const name = document.getElementById('join-name').value.trim();
@@ -641,7 +612,6 @@ function hostNext() {
   socket.emit('host:next', { pin: myPin });
 }
 
-// â”€â”€â”€ RENDER HELPERS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function renderAnswers(containerId, options, clickable, onAnswer) {
   const c = document.getElementById(containerId);
   c.innerHTML = options.map((opt, i) => `
@@ -663,7 +633,7 @@ function renderPlayerAnswers(options) {
 }
 
 function renderLeaderboard(containerId, lb) {
-  const medals = ['ðŸ¥‡','ðŸ¥ˆ','ðŸ¥‰','4ï¸âƒ£','5ï¸âƒ£'];
+  const medals = ['1st','2nd','3rd','4th','5th'];
   document.getElementById(containerId).innerHTML = lb.map((p, i) => `
     <div class="lb-row" style="animation-delay:${i*.07}s">
       <span class="lb-rank">${medals[i] || (i+1)}</span>
@@ -682,13 +652,12 @@ function renderStatBars(bars, correct) {
       <div class="stat-bar-wrap">
         <div class="stat-bar ${isCorrect?'correct-bar':''}" style="height:${pct}%;background:${COLORS[i]};width:60px;">${b.count}</div>
         <div class="stat-shape">${SHAPES[i]}</div>
-        ${isCorrect ? '<div style="font-size:.65rem;color:#2ecc71;font-weight:700">âœ“ CORRECT</div>' : ''}
+        ${isCorrect ? '<div style="font-size:.65rem;color:#2ecc71;font-weight:700">CORRECT</div>' : ''}
       </div>
     `;
   }).join('');
 }
 
-// â”€â”€â”€ TIMER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 let timerInterval = null;
 function updateTimerUI(timeLeft, total, hostId, playerId, barId) {
   const pct = (timeLeft / total) * 100;
@@ -707,7 +676,6 @@ function updateTimerUI(timeLeft, total, hostId, playerId, barId) {
 let submitAnswer = () => {};
 let playerAnswer = (i) => {};
 
-// â”€â”€â”€ SOCKET EVENTS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 socket.on('host:created', ({ pin }) => {
   myPin = pin;
   document.getElementById('lobby-pin').textContent = pin;
@@ -784,9 +752,9 @@ socket.on('host:answer_count', ({ answered, total }) => {
 });
 
 socket.on('player:answered', ({ correct, points }) => {
-  document.getElementById('pa-icon').textContent  = correct ? 'âœ…' : 'âŒ';
+  document.getElementById('pa-icon').textContent  = correct ? 'OK' : 'X';
   document.getElementById('pa-pts').textContent   = correct ? `+${points}` : '0';
-  document.getElementById('pa-label').textContent = correct ? 'Correct! ðŸŽ‰' : 'Wrong answer';
+  document.getElementById('pa-label').textContent = correct ? 'Correct!' : 'Wrong answer';
   showScreen('player-answered');
 });
 
@@ -840,7 +808,7 @@ function renderPodium(podiumId, lbId, lb) {
   const [first, second, third] = lb;
   const po = document.getElementById(podiumId);
   const order = [second, first, third].filter(Boolean);
-  const blocks = ['1st ðŸ¥ˆ','1st ðŸ¥‡','1st ðŸ¥‰'];
+  const blocks = ['1st','1st','1st'];
   const ranks  = ['2nd','1st','3rd'];
   po.innerHTML = order.map((p, idx) => {
     const realRank = idx === 1 ? 0 : idx === 0 ? 1 : 2;
@@ -856,10 +824,7 @@ function renderPodium(podiumId, lbId, lb) {
   renderLeaderboard(lbId, lb);
 }
 
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-//  MUSIC ENGINE â€” Web Audio API procedural chiptune
 //  100% synthesized, zero copyright issues
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 const Music = (() => {
   let ctx = null, masterGain = null, muted = false;
   let currentTrack = null, scheduledNodes = [], loopTimeout = null;
@@ -1000,19 +965,17 @@ const Music = (() => {
 function toggleMute() {
   const m = !Music.muted;
   Music.setMuted(m);
-  document.getElementById('mute-btn').textContent = m ? 'ðŸ”‡' : 'ðŸ”Š';
+  document.getElementById('mute-btn').textContent = m ? 'Mute' : 'Vol';
   document.getElementById('vol-slider').disabled = m;
 }
 
 function setVolume(val) {
   const v = val / 100;
   if (Music.masterGain) Music.masterGain.gain.linearRampToValueAtTime(v, Music.ctx.currentTime + 0.05);
-  document.getElementById('mute-btn').textContent = v === 0 ? 'ðŸ”‡' : 'ðŸ”Š';
+  document.getElementById('mute-btn').textContent = v === 0 ? 'Mute' : 'Vol';
 }
 
-// â”€â”€â”€ INIT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 initOptionsUI();
 </script>
 </body>
 </html>
-
