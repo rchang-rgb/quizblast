@@ -614,20 +614,20 @@ function hostNext() {
 
 function renderAnswers(containerId, options, clickable, onAnswer) {
   const c = document.getElementById(containerId);
-  c.innerHTML = options.map((opt, i) => `
+  c.innerHTML = options.filter(opt => opt).map((opt, i) => `
     <button class="answer-btn a${i} ${clickable?'':'disabled'}" onclick="${clickable?`submitAnswer(${i})`:''}" id="ans-${i}">
       <span class="shape">${SHAPES[i]}</span>
-      <span>${opt || '(empty)'}</span>
+      <span>${opt}</span>
     </button>
   `).join('');
 }
 
 function renderPlayerAnswers(options) {
   const c = document.getElementById('pq-answers');
-  c.innerHTML = options.map((opt, i) => `
+  c.innerHTML = options.filter(opt => opt).map((opt, i) => `
     <button class="p-answer-btn a${i}" onclick="playerAnswer(${i})" id="pans-${i}">
       <span class="p-shape">${SHAPES[i]}</span>
-      <span class="p-text">${opt || ''}</span>
+      <span class="p-text">${opt}</span>
     </button>
   `).join('');
 }
@@ -685,11 +685,11 @@ socket.on('host:created', ({ pin }) => {
   fetch('/server-info')
     .then(r => r.json())
     .then(({ url: joinUrl }) => {
-      console.log('Join URL for QR:', joinUrl);
+      const scanUrl = `${joinUrl}?pin=${myPin}`;
       const qrEl = document.getElementById('qr-code');
       qrEl.innerHTML = '';
-      new QRCode(qrEl, { text: joinUrl, width: 200, height: 200, colorDark: '#000000', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M });
-      document.getElementById('join-url').innerHTML = `<a href="${joinUrl}" style="color:#3498db">${joinUrl}</a>`;
+      new QRCode(qrEl, { text: scanUrl, width: 200, height: 200, colorDark: '#000000', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M });
+      document.getElementById('join-url').innerHTML = `<a href="${scanUrl}" style="color:#3498db">${joinUrl}</a>`;
     });
 
   showScreen('host-lobby');
@@ -976,6 +976,14 @@ function setVolume(val) {
 }
 
 initOptionsUI();
+
+// If URL has ?pin=XXXXXX (from QR code scan), auto-fill and jump to join screen
+const urlPin = new URLSearchParams(location.search).get('pin');
+if (urlPin) {
+  document.getElementById('join-pin').value = urlPin;
+  showScreen('join');
+  document.getElementById('join-name').focus();
+}
 </script>
 </body>
 </html>
