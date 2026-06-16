@@ -33,9 +33,8 @@ function generatePin() {
 }
 
 function calcPoints(timeLeft, totalTime) {
-  const base = 1000;
-  const bonus = Math.round((timeLeft / totalTime) * 500);
-  return base + bonus;
+  // 500 base + up to 1000 speed bonus = max 1500
+  return Math.round(500 + (timeLeft / totalTime) * 1000);
 }
 
 io.on('connection', (socket) => {

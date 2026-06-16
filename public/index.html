@@ -78,7 +78,9 @@
 
     .q-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
     .q-number { color: var(--sub); font-size: .9rem; }
-    .q-text { font-size: clamp(1.2rem, 3vw, 2rem); font-weight: 700; text-align: center; margin: 24px 0; line-height: 1.3; }
+    .q-text { font-size: clamp(1.2rem, 3vw, 2rem); font-weight: 700; text-align: center; margin: 12px 0; line-height: 1.3; }
+    .q-gif { display: flex; justify-content: center; margin: 8px 0; }
+    .q-gif img { max-height: 180px; max-width: 100%; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,.4); }
     .answer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; max-width: 700px; }
     .answer-btn { padding: 20px 16px; border-radius: 14px; font-size: 1rem; font-weight: 700; color: #fff; text-align: left; display: flex; align-items: center; gap: 12px; transition: transform .1s; border: 3px solid transparent; position: relative; overflow: hidden; }
     .answer-btn::after { content: ''; position: absolute; inset: 0; background: rgba(0,0,0,.15); opacity: 0; transition: opacity .2s; }
@@ -286,6 +288,7 @@
     <div class="timer-wrap">
       <div class="timer-bar-bg"><div class="timer-bar" id="hq-bar" style="width:100%"></div></div>
     </div>
+    <div class="q-gif" id="hq-gif" style="display:none"></div>
     <div class="q-text" id="hq-text">Question text here</div>
     <div class="answer-grid" id="hq-answers"></div>
     <div class="answer-count" id="hq-count">Waiting for answers... <strong>0</strong></div>
@@ -334,6 +337,7 @@
     <div class="timer-wrap" style="max-width:320px">
       <div class="timer-bar-bg"><div class="timer-bar" id="pq-bar" style="width:100%"></div></div>
     </div>
+    <div class="q-gif" id="pq-gif" style="display:none"></div>
     <div class="q-text" id="pq-text" style="font-size:1.1rem;max-width:340px;">Question</div>
     <div class="player-answer-grid" id="pq-answers"></div>
   </div>
@@ -502,8 +506,9 @@ function loadPresentationQuiz() {
       correct: 0, time: 20
     },
     {
-      text: "What does this GIF represent? [Show GIF on screen]",
+      text: "What does this GIF represent?",
       options: ["You did something stupid", "This is awkward, idk how to respond", "You're acting idiotically", "It is way too hot out today"],
+      image: "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHU4dWVkbDhyd2FkcTdrdTZ5ajhvdnkzeXdvaTMyMXBtOXY5ZmxiaCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/19GIHDk6wuw9HVGsiM/giphy.gif",
       correct: 1, time: 20
     },
     {
@@ -557,8 +562,9 @@ function loadPresentationQuiz() {
       correct: 1, time: 20
     },
     {
-      text: "What would you use this GIF for? [Show GIF on screen]",
+      text: "What would you use this GIF for?",
       options: ["Your food was already eaten from the fridge", "You were super excited but came out disappointed", "The fridge was warm when you opened it", "Your food had expired when you went to eat it"],
+      image: "https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3em1idXN0NnM5amZwOTNjYmllc3RpM3c3OHhlbjdiYjVzOGx3OGtveiZlcD12MV9naWZzX3NlYXJjaCZjdD1n/6oFNB3JPuLpAs/giphy.gif",
       correct: 1, time: 20
     },
     {
@@ -714,6 +720,9 @@ socket.on('host:question', ({ question, index, total, duration }) => {
   questionDuration = duration;
   document.getElementById('hq-number').textContent = `Question ${index+1} / ${total}`;
   document.getElementById('hq-text').textContent = question.text;
+  const hGif = document.getElementById('hq-gif');
+  if (question.image) { hGif.innerHTML = `<img src="${question.image}" alt=""/>`; hGif.style.display = 'flex'; }
+  else { hGif.innerHTML = ''; hGif.style.display = 'none'; }
   document.getElementById('hq-timer').textContent = duration;
   document.getElementById('hq-bar').style.width = '100%';
   document.getElementById('hq-count').innerHTML = 'Answers: <strong>0</strong>';
@@ -726,6 +735,9 @@ socket.on('player:question', ({ question, index, duration }) => {
   document.getElementById('pq-timer').textContent = duration;
   document.getElementById('pq-bar').style.width = '100%';
   document.getElementById('pq-text').textContent = question.text;
+  const pGif = document.getElementById('pq-gif');
+  if (question.image) { pGif.innerHTML = `<img src="${question.image}" alt=""/>`; pGif.style.display = 'flex'; }
+  else { pGif.innerHTML = ''; pGif.style.display = 'none'; }
   renderPlayerAnswers(question.options);
   showScreen('player-question');
 
