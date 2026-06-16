@@ -272,6 +272,7 @@
       <div class="flex-gap" style="justify-content:space-between;align-items:center;">
         <span id="q-count-label" style="color:var(--sub);font-size:.9rem;">0 questions</span>
         <div class="flex-gap">
+          <button class="btn btn-gold" onclick="loadPresentationQuiz()" style="font-size:.85rem;padding:10px 16px">⚡ Load Presentation Quiz</button>
           <button class="btn btn-primary" onclick="loadSampleQuestions()" style="font-size:.85rem;padding:10px 16px">Load Sample Quiz</button>
           <button class="btn btn-success btn-xl" id="create-btn" onclick="createGame()" disabled>Create Lobby 🚀</button>
         </div>
@@ -515,6 +516,88 @@ function renderQuestionList() {
 }
 
 function deleteQ(i) { questions.splice(i, 1); renderQuestionList(); }
+
+function loadPresentationQuiz() {
+  questions = [
+    {
+      text: "Which of these is NOT a slang word we went over?",
+      options: ["Chud", "Grave", "Ferda", "Peak"],
+      correct: 1, time: 20
+    },
+    {
+      text: "True or False: GIFs are now appropriate",
+      options: ["True — when used appropriately", "False — ew no, always cringe", "", ""],
+      correct: 0, time: 20
+    },
+    {
+      text: "What does this GIF represent? 😬 [Show GIF on screen]",
+      options: ["You did something stupid", "This is awkward, idk how to respond", "You're acting idiotically", "It is way too hot out today"],
+      correct: 1, time: 25
+    },
+    {
+      text: "If you are better than someone, what are you considered?",
+      options: ["Touse — top", "Bouse — best", "Mouse — more", "Bouse — beautiful"],
+      correct: 1, time: 20
+    },
+    {
+      text: "\"I have been working out so much I ___ Zac Efron\"",
+      options: ["Beat", "Slay", "Mog", "Entice"],
+      correct: 2, time: 20
+    },
+    {
+      text: "Which of these is the correct usage of the word Fade?",
+      options: ["Fade bowling, let's go grub", "I'm gonna fade away from dinner", "I didn't sleep, my vision is fading", "That fades dudeee"],
+      correct: 0, time: 25
+    },
+    {
+      text: "Which of the following is the correct term for acting fake?",
+      options: ["Performative", "Larping", "Goblining", "Vibefarming"],
+      correct: 1, time: 20
+    },
+    {
+      text: "You see a high schooler hit a backflip on a scooter. What do you say?",
+      options: ["That's so rad dude", "I can't believe it, that's crazy", "That was peak", "How do I mog like you?"],
+      correct: 2, time: 25
+    },
+    {
+      text: "What's the best way to make your friend dislike you after a boring story?",
+      options: ["Chills bro, chills", "Wapicada bro", "That's tough", "No way, that's crazyyy"],
+      correct: 2, time: 25
+    },
+    {
+      text: "What would you call someone who doesn't mog?",
+      options: ["Narp", "Larp", "Chud", "Chopped"],
+      correct: 0, time: 20
+    },
+    {
+      text: "Which of these is NOT a slang word we went over?",
+      options: ["This s***", "Wiggle", "Fried", "Flow state"],
+      correct: 1, time: 20
+    },
+    {
+      text: "Your coworker just got a massive promotion out of nowhere. Best slang response?",
+      options: ["That's so fried bro", "He really mogged the whole office", "What a chud move", "He's larping as a manager"],
+      correct: 1, time: 25
+    },
+    {
+      text: "What does it mean when someone says \"you're cooked\"? (not in the slides!)",
+      options: ["You've been working out too hard", "You're done for / in trouble", "You're sweating from the heat", "You're really good at something"],
+      correct: 1, time: 25
+    },
+    {
+      text: "What would you use this GIF for? 😤 [Show GIF on screen]",
+      options: ["Your food was already eaten from the fridge", "You were super excited but came out disappointed", "The fridge was warm when you opened it", "Your food had expired when you went to eat it"],
+      correct: 1, time: 25
+    },
+    {
+      text: "🏆 TIE BREAKER! Best example using the slang word: MOUSE",
+      options: ["\"I'm so mouse right now\"", "\"That presentation was so mouse\"", "\"He moused the whole room\"", "\"Stop mousing around\""],
+      correct: 0, time: 30
+    },
+  ];
+  renderQuestionList();
+  toast('Presentation quiz loaded! 15 questions ready ⚡');
+}
 
 function loadSampleQuestions() {
   questions = [
