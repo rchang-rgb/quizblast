@@ -279,7 +279,7 @@
 
 <!-- HOST QUESTION -->
 <div id="host-question" class="screen hidden">
-  <div style="width:100%;max-width:760px;display:flex;flex-direction:column;align-items:center;">
+  <div style="width:100%;max-width:760px;display:flex;flex-direction:column;align-items:center;overflow-y:auto;max-height:90vh;padding-bottom:16px;">
     <div class="q-header" style="width:100%;">
       <span class="q-number" id="hq-number">Question 1 / 10</span>
       <span class="tag" id="hq-pin">PIN: ------</span>
@@ -388,6 +388,7 @@ let myName = null;
 let currentQuestions = [];
 let correctAnswer = null;
 let questionDuration = 20;
+let currentOptions = [];
 
 (function() {
   const canvas = document.getElementById('bg-canvas');
@@ -670,11 +671,13 @@ function renderStatBars(bars, correct) {
   document.getElementById('hr-bars').innerHTML = bars.map((b, i) => {
     const pct = Math.round((b.count / max) * 100);
     const isCorrect = b.correct;
+    const label = currentOptions[i] || '';
     return `
-      <div class="stat-bar-wrap">
+      <div class="stat-bar-wrap" style="max-width:100px;">
         <div class="stat-bar ${isCorrect?'correct-bar':''}" style="height:${pct}%;background:${COLORS[i]};width:60px;">${b.count}</div>
         <div class="stat-shape">${SHAPES[i]}</div>
-        ${isCorrect ? '<div style="font-size:.65rem;color:#2ecc71;font-weight:700">CORRECT</div>' : ''}
+        ${isCorrect ? '<div style="font-size:.65rem;color:#2ecc71;font-weight:700;margin-top:2px;">CORRECT</div>' : ''}
+        ${label ? `<div style="font-size:.65rem;color:var(--sub);margin-top:2px;text-align:center;word-break:break-word;">${label}</div>` : ''}
       </div>
     `;
   }).join('');
@@ -734,6 +737,7 @@ socket.on('game:starting', () => {
 socket.on('host:question', ({ question, index, total, duration }) => {
   correctAnswer = question.correct;
   questionDuration = duration;
+  currentOptions = question.options || [];
   document.getElementById('hq-number').textContent = `Question ${index+1} / ${total}`;
   document.getElementById('hq-text').textContent = question.text;
   const hGif = document.getElementById('hq-gif');
