@@ -1,13 +1,13 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>QuizBlast 🎮</title>
+  <title>QuizBlast ðŸŽ®</title>
   <script src="/socket.io/socket.io.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <style>
-    /* ─── RESET & BASE ─────────────────────────────────────── */
+    /* â”€â”€â”€ RESET & BASE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
       --c1: #e74c3c; --c2: #3498db; --c3: #2ecc71; --c4: #f39c12;
@@ -19,23 +19,23 @@
     button { cursor: pointer; border: none; outline: none; font-family: inherit; }
     input  { outline: none; font-family: inherit; }
 
-    /* ─── ANIMATED BACKGROUND ──────────────────────────────── */
+    /* â”€â”€â”€ ANIMATED BACKGROUND â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     #bg-canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
 
-    /* ─── SCREEN SYSTEM ────────────────────────────────────── */
+    /* â”€â”€â”€ SCREEN SYSTEM â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     .screen { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1; padding: 20px; transition: opacity .4s, transform .4s; }
     .screen.hidden { opacity: 0; pointer-events: none; transform: scale(.96); }
 
-    /* ─── LOGO ─────────────────────────────────────────────── */
+    /* â”€â”€â”€ LOGO â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     .logo { font-size: clamp(2.5rem, 8vw, 5rem); font-weight: 900; letter-spacing: -2px; background: linear-gradient(135deg, #e74c3c, #f39c12, #2ecc71, #3498db); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; filter: drop-shadow(0 0 20px rgba(255,200,0,.3)); animation: pulse 3s ease-in-out infinite; }
     @keyframes pulse { 0%,100% { filter: drop-shadow(0 0 20px rgba(255,200,0,.3)); } 50% { filter: drop-shadow(0 0 40px rgba(255,200,0,.6)); } }
     .logo-sub { color: var(--sub); font-size: 1rem; letter-spacing: 4px; text-transform: uppercase; margin-top: 4px; }
 
-    /* ─── CARDS ─────────────────────────────────────────────── */
+    /* â”€â”€â”€ CARDS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     .card { background: var(--card); border-radius: var(--radius); padding: 32px; box-shadow: var(--shadow); border: 1px solid rgba(255,255,255,.07); width: 100%; max-width: 460px; }
     .card h2 { font-size: 1.4rem; margin-bottom: 20px; }
 
-    /* ─── INPUTS ─────────────────────────────────────────────── */
+    /* â”€â”€â”€ INPUTS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     .input-group { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
     input[type=text], input[type=number], textarea, select {
       background: rgba(255,255,255,.07); border: 2px solid rgba(255,255,255,.12);
@@ -46,7 +46,7 @@
     textarea { resize: vertical; min-height: 80px; }
     label { font-size: .85rem; color: var(--sub); margin-bottom: 4px; }
 
-    /* ─── BUTTONS ─────────────────────────────────────────────── */
+    /* â”€â”€â”€ BUTTONS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     .btn { padding: 14px 28px; border-radius: 12px; font-size: 1rem; font-weight: 700; transition: transform .15s, box-shadow .15s, opacity .2s; letter-spacing: .5px; }
     .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,.4); }
     .btn:active { transform: translateY(0); }
@@ -61,10 +61,10 @@
     .btn-home-row { display: flex; gap: 16px; margin-top: 24px; }
     .btn-home-row .btn { flex: 1; text-align: center; font-size: 1.1rem; padding: 20px; border-radius: 16px; }
 
-    /* ─── HOME ─────────────────────────────────────────────── */
+    /* â”€â”€â”€ HOME â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     #home .logo-wrap { text-align: center; margin-bottom: 40px; }
 
-    /* ─── LOBBY (HOST) ─────────────────────────────────────── */
+    /* â”€â”€â”€ LOBBY (HOST) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     .pin-display { font-size: clamp(3rem, 10vw, 5rem); font-weight: 900; letter-spacing: 8px; color: #f39c12; text-align: center; text-shadow: 0 0 30px rgba(243,156,18,.4); }
     .pin-label { text-align: center; color: var(--sub); font-size: .9rem; margin-bottom: 8px; letter-spacing: 3px; text-transform: uppercase; }
     #qr-code { display: flex; justify-content: center; margin: 14px 0 6px; }
@@ -76,7 +76,7 @@
     .player-chip { background: rgba(255,255,255,.1); border-radius: 20px; padding: 6px 14px; font-size: .85rem; font-weight: 600; animation: chipIn .3s ease; border: 1px solid rgba(255,255,255,.15); }
     @keyframes chipIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
-    /* ─── QUESTION BUILDER ─────────────────────────────────── */
+    /* â”€â”€â”€ QUESTION BUILDER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     .q-list { display: flex; flex-direction: column; gap: 10px; max-height: 300px; overflow-y: auto; margin-bottom: 16px; }
     .q-item { background: rgba(255,255,255,.06); border-radius: 10px; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; gap: 12px; font-size: .9rem; }
     .q-item span { flex: 1; }
@@ -86,7 +86,7 @@
     .correct-btn { padding: 8px 12px; border-radius: 8px; font-size: .75rem; font-weight: 700; border: 2px solid rgba(255,255,255,.2); background: rgba(255,255,255,.06); color: var(--sub); transition: all .2s; }
     .correct-btn.selected { background: #2ecc71; border-color: #2ecc71; color: #fff; }
 
-    /* ─── QUESTION DISPLAY (HOST) ──────────────────────────── */
+    /* â”€â”€â”€ QUESTION DISPLAY (HOST) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     .q-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
     .q-number { color: var(--sub); font-size: .9rem; }
     .q-text { font-size: clamp(1.2rem, 3vw, 2rem); font-weight: 700; text-align: center; margin: 24px 0; line-height: 1.3; }
@@ -103,7 +103,7 @@
     .answer-btn.wrong   { opacity: .4; }
     .answer-btn.disabled { pointer-events: none; }
 
-    /* ─── TIMER BAR ────────────────────────────────────────── */
+    /* â”€â”€â”€ TIMER BAR â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     .timer-wrap { width: 100%; max-width: 700px; margin: 8px 0 20px; }
     .timer-bar-bg { background: rgba(255,255,255,.1); border-radius: 999px; height: 12px; overflow: hidden; }
     .timer-bar { height: 100%; border-radius: 999px; transition: width 1s linear, background .5s; background: #2ecc71; }
@@ -111,7 +111,7 @@
     .timer-text.urgent { color: #e74c3c; animation: shake .1s infinite; }
     @keyframes shake { 0%,100%{transform:translateX(0)} 50%{transform:translateX(3px)} }
 
-    /* ─── RESULTS ──────────────────────────────────────────── */
+    /* â”€â”€â”€ RESULTS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     .stat-bars { display: flex; gap: 8px; align-items: flex-end; height: 120px; margin: 20px 0; justify-content: center; }
     .stat-bar-wrap { display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 1; max-width: 80px; }
     .stat-bar { width: 100%; border-radius: 8px 8px 0 0; min-height: 4px; transition: height .6s ease; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 4px; font-weight: 700; font-size: .8rem; color: rgba(255,255,255,.8); }
@@ -128,12 +128,12 @@
     .lb-name { flex: 1; font-weight: 600; }
     .lb-score { font-weight: 800; color: #f39c12; }
 
-    /* ─── PLAYER WAITING ───────────────────────────────────── */
+    /* â”€â”€â”€ PLAYER WAITING â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     .waiting-anim { font-size: 4rem; animation: bounce 1s ease-in-out infinite; }
     @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
     .player-name-badge { background: linear-gradient(135deg, #3498db, #2980b9); border-radius: 14px; padding: 12px 28px; font-size: 1.5rem; font-weight: 800; margin: 16px 0; }
 
-    /* ─── PLAYER ANSWER ────────────────────────────────────── */
+    /* â”€â”€â”€ PLAYER ANSWER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     .player-answer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; width: 100%; max-width: 480px; }
     .p-answer-btn { padding: 0; border-radius: 16px; font-size: 1.5rem; font-weight: 800; color: #fff; aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; transition: transform .1s, box-shadow .2s; box-shadow: 0 4px 16px rgba(0,0,0,.3); }
     .p-answer-btn:hover { transform: scale(1.04); }
@@ -147,13 +147,13 @@
     .p-answer-btn .p-text { font-size: .7rem; padding: 0 8px; text-align: center; opacity: .9; }
     .p-answer-btn:disabled { opacity: .5; cursor: not-allowed; }
 
-    /* ─── RESULT FEEDBACK ──────────────────────────────────── */
+    /* â”€â”€â”€ RESULT FEEDBACK â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     .feedback-icon { font-size: 6rem; animation: popIn .4s cubic-bezier(.175,.885,.32,1.275); }
     @keyframes popIn { from{transform:scale(0) rotate(-20deg);opacity:0} to{transform:scale(1) rotate(0);opacity:1} }
     .feedback-pts { font-size: 2.5rem; font-weight: 900; color: #f39c12; animation: popIn .4s .15s both cubic-bezier(.175,.885,.32,1.275); }
     .feedback-label { color: var(--sub); font-size: .9rem; }
 
-    /* ─── PODIUM ───────────────────────────────────────────── */
+    /* â”€â”€â”€ PODIUM â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     .podium-wrap { display: flex; align-items: flex-end; justify-content: center; gap: 16px; margin: 32px 0 24px; }
     .podium-col { display: flex; flex-direction: column; align-items: center; gap: 8px; }
     .podium-avatar { width: 64px; height: 64px; border-radius: 50%; font-size: 1.8rem; display: flex; align-items: center; justify-content: center; border: 3px solid rgba(255,255,255,.3); }
@@ -166,24 +166,24 @@
     .confetti-emoji { font-size: 2rem; animation: confettiDrop 2s ease-in-out infinite alternate; display: inline-block; }
     @keyframes confettiDrop { from{transform:translateY(0) rotate(0)} to{transform:translateY(10px) rotate(15deg)} }
 
-    /* ─── TOAST ─────────────────────────────────────────────── */
+    /* â”€â”€â”€ TOAST â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     #toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: #e74c3c; color: #fff; padding: 12px 24px; border-radius: 12px; font-weight: 600; z-index: 9999; transition: transform .3s; pointer-events: none; }
     #toast.show { transform: translateX(-50%) translateY(0); }
 
-    /* ─── ANSWER COUNT BADGE ────────────────────────────────── */
+    /* â”€â”€â”€ ANSWER COUNT BADGE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     .answer-count { text-align: center; font-size: 1rem; color: var(--sub); margin-top: 8px; }
     .answer-count strong { color: #2ecc71; font-size: 1.3rem; }
 
-    /* ─── SCROLLBAR ─────────────────────────────────────────── */
+    /* â”€â”€â”€ SCROLLBAR â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: rgba(255,255,255,.15); border-radius: 3px; }
 
-    /* ─── RESPONSIVE ─────────────────────────────────────────── */
+    /* â”€â”€â”€ RESPONSIVE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     @media (max-width: 600px) {
       .answer-grid, .player-answer-grid { grid-template-columns: 1fr 1fr; }
       .btn-home-row { flex-direction: column; }
     }
 
-    /* ─── UTILITY ────────────────────────────────────────────── */
+    /* â”€â”€â”€ UTILITY â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     .text-center { text-align: center; }
     .mt-8  { margin-top: 8px; }
     .mt-16 { margin-top: 16px; }
@@ -207,48 +207,48 @@
   <button id="mute-btn" onclick="toggleMute()" title="Toggle music" style="
     background:none;border:none;color:#fff;font-size:1.2rem;cursor:pointer;
     padding:0;width:24px;text-align:center;flex-shrink:0;
-  ">🔊</button>
+  ">ðŸ”Š</button>
   <input id="vol-slider" type="range" min="0" max="100" value="18"
     oninput="setVolume(this.value)"
     style="width:90px;accent-color:#3498db;cursor:pointer;" />
 </div>
 
-<!-- ════════════════ HOME ════════════════ -->
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• HOME â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
 <div id="home" class="screen">
   <div class="logo-wrap">
     <div class="logo">QuizBlast</div>
-    <div class="logo-sub">⚡ Multiplayer Quiz Battle</div>
+    <div class="logo-sub">âš¡ Multiplayer Quiz Battle</div>
   </div>
   <div class="card text-center" style="max-width:500px">
     <p style="color:var(--sub);margin-bottom:8px;">Up to 100 players per lobby</p>
     <div class="btn-home-row">
-      <button class="btn btn-gold btn-xl" onclick="showScreen('join')">🎮 Join Game</button>
-      <button class="btn btn-primary btn-xl" onclick="showScreen('host-setup')">🎤 Host Game</button>
+      <button class="btn btn-gold btn-xl" onclick="showScreen('join')">ðŸŽ® Join Game</button>
+      <button class="btn btn-primary btn-xl" onclick="showScreen('host-setup')">ðŸŽ¤ Host Game</button>
     </div>
   </div>
 </div>
 
-<!-- ════════════════ JOIN ════════════════ -->
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• JOIN â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
 <div id="join" class="screen hidden">
   <div class="logo" style="font-size:2.5rem;margin-bottom:24px;">QuizBlast</div>
   <div class="card">
-    <h2>🎮 Join a Game</h2>
+    <h2>ðŸŽ® Join a Game</h2>
     <div class="input-group">
       <label>Game PIN</label>
       <input type="text" id="join-pin" placeholder="Enter 6-digit PIN" maxlength="6" inputmode="numeric" style="font-size:2rem;letter-spacing:6px;text-align:center;font-weight:800;" />
       <label>Your Nickname</label>
       <input type="text" id="join-name" placeholder="Enter your name" maxlength="20" />
     </div>
-    <button class="btn btn-gold btn-full btn-xl" onclick="joinGame()">Let's Go! 🚀</button>
-    <button class="btn btn-full mt-8" style="background:rgba(255,255,255,.06);color:var(--sub)" onclick="showScreen('home')">← Back</button>
+    <button class="btn btn-gold btn-full btn-xl" onclick="joinGame()">Let's Go! ðŸš€</button>
+    <button class="btn btn-full mt-8" style="background:rgba(255,255,255,.06);color:var(--sub)" onclick="showScreen('home')">â† Back</button>
   </div>
 </div>
 
-<!-- ════════════════ HOST SETUP ════════════════ -->
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• HOST SETUP â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
 <div id="host-setup" class="screen hidden">
   <div style="width:100%;max-width:700px;max-height:90vh;overflow-y:auto;padding:4px;">
     <div class="card" style="max-width:100%">
-      <h2>🎤 Create Your Quiz</h2>
+      <h2>ðŸŽ¤ Create Your Quiz</h2>
 
       <!-- Question builder -->
       <div style="background:rgba(255,255,255,.04);border-radius:12px;padding:20px;margin-bottom:20px;">
@@ -272,17 +272,17 @@
       <div class="flex-gap" style="justify-content:space-between;align-items:center;">
         <span id="q-count-label" style="color:var(--sub);font-size:.9rem;">0 questions</span>
         <div class="flex-gap">
-          <button class="btn btn-gold" onclick="loadPresentationQuiz()" style="font-size:.85rem;padding:10px 16px">⚡ Load Presentation Quiz</button>
+          <button class="btn btn-gold" onclick="loadPresentationQuiz()" style="font-size:.85rem;padding:10px 16px">âš¡ Load Presentation Quiz</button>
           <button class="btn btn-primary" onclick="loadSampleQuestions()" style="font-size:.85rem;padding:10px 16px">Load Sample Quiz</button>
-          <button class="btn btn-success btn-xl" id="create-btn" onclick="createGame()" disabled>Create Lobby 🚀</button>
+          <button class="btn btn-success btn-xl" id="create-btn" onclick="createGame()" disabled>Create Lobby ðŸš€</button>
         </div>
       </div>
-      <button class="btn btn-full mt-8" style="background:rgba(255,255,255,.06);color:var(--sub)" onclick="showScreen('home')">← Back</button>
+      <button class="btn btn-full mt-8" style="background:rgba(255,255,255,.06);color:var(--sub)" onclick="showScreen('home')">â† Back</button>
     </div>
   </div>
 </div>
 
-<!-- ════════════════ HOST LOBBY ════════════════ -->
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• HOST LOBBY â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
 <div id="host-lobby" class="screen hidden">
   <div class="card" style="max-width:540px;width:100%">
     <div class="pin-label">GAME PIN</div>
@@ -292,12 +292,12 @@
     <div class="player-count">Players joined: <span id="lobby-count">0</span></div>
     <div class="player-grid" id="lobby-players"></div>
     <div class="divider"></div>
-    <button class="btn btn-success btn-full btn-xl" id="start-btn" onclick="startGame()">Start Game ▶</button>
+    <button class="btn btn-success btn-full btn-xl" id="start-btn" onclick="startGame()">Start Game â–¶</button>
     <p style="text-align:center;color:var(--sub);font-size:.8rem;margin-top:12px;">Ask players to go to this page and enter the PIN</p>
   </div>
 </div>
 
-<!-- ════════════════ HOST QUESTION ════════════════ -->
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• HOST QUESTION â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
 <div id="host-question" class="screen hidden">
   <div style="width:100%;max-width:760px;display:flex;flex-direction:column;align-items:center;">
     <div class="q-header" style="width:100%;">
@@ -310,46 +310,46 @@
     </div>
     <div class="q-text" id="hq-text">Question text here</div>
     <div class="answer-grid" id="hq-answers"></div>
-    <div class="answer-count" id="hq-count">Waiting for answers… <strong>0</strong></div>
+    <div class="answer-count" id="hq-count">Waiting for answersâ€¦ <strong>0</strong></div>
   </div>
 </div>
 
-<!-- ════════════════ HOST RESULTS ════════════════ -->
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• HOST RESULTS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
 <div id="host-results" class="screen hidden">
   <div style="width:100%;max-width:700px;display:flex;flex-direction:column;align-items:center;">
-    <h2 style="margin-bottom:8px;">Results 📊</h2>
+    <h2 style="margin-bottom:8px;">Results ðŸ“Š</h2>
     <div class="stat-bars" id="hr-bars"></div>
     <div class="leaderboard" id="hr-leaderboard"></div>
-    <button class="btn btn-gold btn-xl mt-24" onclick="hostNext()">Next Question ▶</button>
+    <button class="btn btn-gold btn-xl mt-24" onclick="hostNext()">Next Question â–¶</button>
   </div>
 </div>
 
-<!-- ════════════════ PODIUM ════════════════ -->
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• PODIUM â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
 <div id="podium" class="screen hidden">
   <div style="text-align:center;max-width:600px;width:100%">
     <div style="font-size:2rem;margin-bottom:8px;">
-      <span class="confetti-emoji">🎉</span>
-      <span class="confetti-emoji" style="animation-delay:.2s">🏆</span>
-      <span class="confetti-emoji" style="animation-delay:.4s">🎉</span>
+      <span class="confetti-emoji">ðŸŽ‰</span>
+      <span class="confetti-emoji" style="animation-delay:.2s">ðŸ†</span>
+      <span class="confetti-emoji" style="animation-delay:.4s">ðŸŽ‰</span>
     </div>
     <h1 style="font-size:2.5rem;margin-bottom:4px;">Game Over!</h1>
     <div class="podium-wrap" id="podium-display"></div>
     <div class="leaderboard" id="podium-lb"></div>
-    <button class="btn btn-primary btn-xl mt-24" onclick="showScreen('home')">Play Again 🔄</button>
+    <button class="btn btn-primary btn-xl mt-24" onclick="showScreen('home')">Play Again ðŸ”„</button>
   </div>
 </div>
 
-<!-- ════════════════ PLAYER WAITING ════════════════ -->
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• PLAYER WAITING â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
 <div id="player-wait" class="screen hidden">
   <div class="text-center">
-    <div class="waiting-anim">🎮</div>
+    <div class="waiting-anim">ðŸŽ®</div>
     <div class="player-name-badge" id="pw-name">Player</div>
-    <p style="color:var(--sub);">You're in! Waiting for host to start…</p>
+    <p style="color:var(--sub);">You're in! Waiting for host to startâ€¦</p>
     <p style="color:var(--sub);font-size:.8rem;margin-top:8px;">PIN: <strong id="pw-pin" style="color:#f39c12">------</strong></p>
   </div>
 </div>
 
-<!-- ════════════════ PLAYER QUESTION ════════════════ -->
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• PLAYER QUESTION â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
 <div id="player-question" class="screen hidden">
   <div style="width:100%;max-width:480px;display:flex;flex-direction:column;align-items:center;gap:16px;">
     <div class="timer-text" id="pq-timer">20</div>
@@ -361,38 +361,38 @@
   </div>
 </div>
 
-<!-- ════════════════ PLAYER ANSWERED ════════════════ -->
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• PLAYER ANSWERED â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
 <div id="player-answered" class="screen hidden">
   <div class="text-center">
-    <div class="feedback-icon" id="pa-icon">⏳</div>
+    <div class="feedback-icon" id="pa-icon">â³</div>
     <div class="feedback-pts" id="pa-pts"></div>
-    <div class="feedback-label" id="pa-label">Waiting for others…</div>
+    <div class="feedback-label" id="pa-label">Waiting for othersâ€¦</div>
   </div>
 </div>
 
-<!-- ════════════════ PLAYER RESULTS ════════════════ -->
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• PLAYER RESULTS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
 <div id="player-results" class="screen hidden">
   <div class="text-center" style="max-width:400px;width:100%">
-    <h2 style="margin-bottom:16px;">Leaderboard 🏆</h2>
+    <h2 style="margin-bottom:16px;">Leaderboard ðŸ†</h2>
     <div class="leaderboard" id="pr-leaderboard"></div>
-    <p style="color:var(--sub);margin-top:16px;font-size:.9rem;">Next question coming up…</p>
+    <p style="color:var(--sub);margin-top:16px;font-size:.9rem;">Next question coming upâ€¦</p>
   </div>
 </div>
 
-<!-- ════════════════ PLAYER PODIUM ════════════════ -->
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• PLAYER PODIUM â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
 <div id="player-podium" class="screen hidden">
   <div style="text-align:center;max-width:400px;width:100%">
     <div style="font-size:2.5rem;margin-bottom:12px;">
-      <span class="confetti-emoji">🎊</span> <span class="confetti-emoji" style="animation-delay:.3s">🏆</span> <span class="confetti-emoji" style="animation-delay:.6s">🎊</span>
+      <span class="confetti-emoji">ðŸŽŠ</span> <span class="confetti-emoji" style="animation-delay:.3s">ðŸ†</span> <span class="confetti-emoji" style="animation-delay:.6s">ðŸŽŠ</span>
     </div>
     <h2>Game Over!</h2>
     <div class="leaderboard mt-16" id="pp-leaderboard"></div>
-    <button class="btn btn-primary btn-xl mt-24" onclick="showScreen('home')">Play Again 🔄</button>
+    <button class="btn btn-primary btn-xl mt-24" onclick="showScreen('home')">Play Again ðŸ”„</button>
   </div>
 </div>
 
 <script>
-// ─── SOCKET ──────────────────────────────────────────────────
+// â”€â”€â”€ SOCKET â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const socket = io({ transports: ['websocket', 'polling'] });
 let myRole = null;  // 'host' | 'player'
 let myPin  = null;
@@ -401,7 +401,7 @@ let currentQuestions = [];
 let correctAnswer = null;
 let questionDuration = 20;
 
-// ─── BACKGROUND CANVAS ───────────────────────────────────────
+// â”€â”€â”€ BACKGROUND CANVAS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 (function() {
   const canvas = document.getElementById('bg-canvas');
   const ctx    = canvas.getContext('2d');
@@ -432,7 +432,7 @@ let questionDuration = 20;
   draw();
 })();
 
-// ─── SCREEN MANAGER ──────────────────────────────────────────
+// â”€â”€â”€ SCREEN MANAGER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
   document.getElementById(id).classList.remove('hidden');
@@ -445,7 +445,7 @@ function showScreen(id) {
   else if (id === 'podium' || id === 'player-podium')            Music.play('home');
 }
 
-// ─── TOAST ───────────────────────────────────────────────────
+// â”€â”€â”€ TOAST â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function toast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
@@ -454,12 +454,12 @@ function toast(msg) {
   t._t = setTimeout(() => t.classList.remove('show'), 3000);
 }
 
-// ─── SHAPES / COLORS ─────────────────────────────────────────
-const SHAPES = ['▲', '◆', '●', '■'];
+// â”€â”€â”€ SHAPES / COLORS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+const SHAPES = ['â–²', 'â—†', 'â—', 'â– '];
 const COLORS = ['#e74c3c', '#3498db', '#2ecc71', '#f39c12'];
-const SHAPE_EMOJIS = ['🔺','💎','🔵','⬛'];
+const SHAPE_EMOJIS = ['ðŸ”º','ðŸ’Ž','ðŸ”µ','â¬›'];
 
-// ─── HOST SETUP ───────────────────────────────────────────────
+// â”€â”€â”€ HOST SETUP â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 let questions = [];
 let correctIndex = 0;
 let optionValues = ['', '', '', ''];
@@ -508,7 +508,7 @@ function renderQuestionList() {
     <div class="q-item">
       <span>${i+1}. ${q.text}</span>
       <span class="tag">${q.time}s</span>
-      <button class="q-del" onclick="deleteQ(${i})">✕</button>
+      <button class="q-del" onclick="deleteQ(${i})">âœ•</button>
     </div>
   `).join('');
   document.getElementById('q-count-label').textContent = `${questions.length} question${questions.length!==1?'s':''}`;
@@ -526,17 +526,17 @@ function loadPresentationQuiz() {
     },
     {
       text: "True or False: GIFs are now appropriate",
-      options: ["True — when used appropriately", "False — ew no, always cringe", "", ""],
+      options: ["True â€” when used appropriately", "False â€” ew no, always cringe", "", ""],
       correct: 0, time: 20
     },
     {
-      text: "What does this GIF represent? 😬 [Show GIF on screen]",
+      text: "What does this GIF represent? ðŸ˜¬ [Show GIF on screen]",
       options: ["You did something stupid", "This is awkward, idk how to respond", "You're acting idiotically", "It is way too hot out today"],
-      correct: 1, time: 25
+      correct: 1, time: 20
     },
     {
       text: "If you are better than someone, what are you considered?",
-      options: ["Touse — top", "Bouse — best", "Mouse — more", "Bouse — beautiful"],
+      options: ["Touse â€” top", "Bouse â€” best", "Mouse â€” more", "Bouse â€” beautiful"],
       correct: 0, time: 20
     },
     {
@@ -547,7 +547,7 @@ function loadPresentationQuiz() {
     {
       text: "Which of these is the correct usage of the word Fade?",
       options: ["Fade bowling, let's go grub", "I'm gonna fade away from dinner", "I didn't sleep, my vision is fading", "That fades dudeee"],
-      correct: 0, time: 25
+      correct: 0, time: 20
     },
     {
       text: "Which of the following is the correct term for acting fake?",
@@ -557,17 +557,17 @@ function loadPresentationQuiz() {
     {
       text: "You see a high schooler hit a backflip on a scooter. What do you say?",
       options: ["That's so rad dude", "I can't believe it, that's crazy", "That was peak", "How do I mog like you?"],
-      correct: 2, time: 25
+      correct: 2, time: 20
     },
     {
       text: "What's the best way to make your friend dislike you after a boring story?",
       options: ["Chills bro, chills", "Wapicada bro", "That's tough", "No way, that's crazyyy"],
-      correct: 2, time: 25
+      correct: 2, time: 20
     },
     {
       text: "What would you call someone who doesn't mog?",
       options: ["Narp", "Larp", "Chud", "Chopped"],
-      correct: 2, time: 20
+      correct: [2, 3], time: 20
     },
     {
       text: "Which of these is NOT a slang word we went over?",
@@ -577,26 +577,26 @@ function loadPresentationQuiz() {
     {
       text: "Your coworker just got a massive promotion out of nowhere. Best slang response?",
       options: ["That's so fried bro", "He really mogged the whole office", "What a chud move", "He's larping as a manager"],
-      correct: 1, time: 25
+      correct: 1, time: 20
     },
     {
       text: "What does it mean when someone says \"you're cooked\"? (not in the slides!)",
       options: ["You've been working out too hard", "You're done for / in trouble", "You're sweating from the heat", "You're really good at something"],
-      correct: 1, time: 25
+      correct: 1, time: 20
     },
     {
-      text: "What would you use this GIF for? 😤 [Show GIF on screen]",
+      text: "What would you use this GIF for? ðŸ˜¤ [Show GIF on screen]",
       options: ["Your food was already eaten from the fridge", "You were super excited but came out disappointed", "The fridge was warm when you opened it", "Your food had expired when you went to eat it"],
-      correct: 1, time: 25
+      correct: 1, time: 20
     },
     {
-      text: "🏆 TIE BREAKER! Best example using the slang word: MOUSE",
+      text: "ðŸ† TIE BREAKER! Best example using the slang word: MOUSE",
       options: ["\"I'm so mouse right now\"", "\"That presentation was so mouse\"", "\"He moused the whole room\"", "\"Stop mousing around\""],
-      correct: 0, time: 30
+      correct: 0, time: 20
     },
   ];
   renderQuestionList();
-  toast('Presentation quiz loaded! 15 questions ready ⚡');
+  toast('Presentation quiz loaded! 15 questions ready âš¡');
 }
 
 function loadSampleQuestions() {
@@ -605,7 +605,7 @@ function loadSampleQuestions() {
     { text: "How many sides does a hexagon have?", options: ["5", "6", "7", "8"], correct: 1, time: 15 },
     { text: "What planet is closest to the Sun?", options: ["Venus", "Earth", "Mercury", "Mars"], correct: 2, time: 20 },
     { text: "Who painted the Mona Lisa?", options: ["Van Gogh", "Picasso", "Da Vinci", "Rembrandt"], correct: 2, time: 20 },
-    { text: "What is 7 × 8?", options: ["54", "56", "58", "64"], correct: 1, time: 15 },
+    { text: "What is 7 Ã— 8?", options: ["54", "56", "58", "64"], correct: 1, time: 15 },
     { text: "Which element has the symbol 'O'?", options: ["Gold", "Oxygen", "Osmium", "Oganesson"], correct: 1, time: 20 },
     { text: "What is the largest ocean on Earth?", options: ["Atlantic", "Indian", "Arctic", "Pacific"], correct: 3, time: 20 },
     { text: "In what year did World War II end?", options: ["1943", "1944", "1945", "1946"], correct: 2, time: 20 },
@@ -622,7 +622,7 @@ function createGame() {
   socket.emit('host:create', { questions, playerLimit: 100 });
 }
 
-// ─── JOIN GAME ────────────────────────────────────────────────
+// â”€â”€â”€ JOIN GAME â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function joinGame() {
   const pin  = document.getElementById('join-pin').value.trim();
   const name = document.getElementById('join-name').value.trim();
@@ -641,7 +641,7 @@ function hostNext() {
   socket.emit('host:next', { pin: myPin });
 }
 
-// ─── RENDER HELPERS ───────────────────────────────────────────
+// â”€â”€â”€ RENDER HELPERS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function renderAnswers(containerId, options, clickable, onAnswer) {
   const c = document.getElementById(containerId);
   c.innerHTML = options.map((opt, i) => `
@@ -663,7 +663,7 @@ function renderPlayerAnswers(options) {
 }
 
 function renderLeaderboard(containerId, lb) {
-  const medals = ['🥇','🥈','🥉','4️⃣','5️⃣'];
+  const medals = ['ðŸ¥‡','ðŸ¥ˆ','ðŸ¥‰','4ï¸âƒ£','5ï¸âƒ£'];
   document.getElementById(containerId).innerHTML = lb.map((p, i) => `
     <div class="lb-row" style="animation-delay:${i*.07}s">
       <span class="lb-rank">${medals[i] || (i+1)}</span>
@@ -682,13 +682,13 @@ function renderStatBars(bars, correct) {
       <div class="stat-bar-wrap">
         <div class="stat-bar ${isCorrect?'correct-bar':''}" style="height:${pct}%;background:${COLORS[i]};width:60px;">${b.count}</div>
         <div class="stat-shape">${SHAPES[i]}</div>
-        ${isCorrect ? '<div style="font-size:.65rem;color:#2ecc71;font-weight:700">✓ CORRECT</div>' : ''}
+        ${isCorrect ? '<div style="font-size:.65rem;color:#2ecc71;font-weight:700">âœ“ CORRECT</div>' : ''}
       </div>
     `;
   }).join('');
 }
 
-// ─── TIMER ────────────────────────────────────────────────────
+// â”€â”€â”€ TIMER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 let timerInterval = null;
 function updateTimerUI(timeLeft, total, hostId, playerId, barId) {
   const pct = (timeLeft / total) * 100;
@@ -707,7 +707,7 @@ function updateTimerUI(timeLeft, total, hostId, playerId, barId) {
 let submitAnswer = () => {};
 let playerAnswer = (i) => {};
 
-// ─── SOCKET EVENTS ────────────────────────────────────────────
+// â”€â”€â”€ SOCKET EVENTS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 socket.on('host:created', ({ pin }) => {
   myPin = pin;
   document.getElementById('lobby-pin').textContent = pin;
@@ -784,9 +784,9 @@ socket.on('host:answer_count', ({ answered, total }) => {
 });
 
 socket.on('player:answered', ({ correct, points }) => {
-  document.getElementById('pa-icon').textContent  = correct ? '✅' : '❌';
+  document.getElementById('pa-icon').textContent  = correct ? 'âœ…' : 'âŒ';
   document.getElementById('pa-pts').textContent   = correct ? `+${points}` : '0';
-  document.getElementById('pa-label').textContent = correct ? 'Correct! 🎉' : 'Wrong answer';
+  document.getElementById('pa-label').textContent = correct ? 'Correct! ðŸŽ‰' : 'Wrong answer';
   showScreen('player-answered');
 });
 
@@ -795,7 +795,8 @@ socket.on('game:results', ({ correct, stats, leaderboard, explanation }) => {
   if (myRole === 'host') {
     for (let i = 0; i < 4; i++) {
       const btn = document.getElementById(`ans-${i}`);
-      if (btn) btn.classList.add(i === correct ? 'correct' : 'wrong');
+      const correctArr = Array.isArray(correct) ? correct : [correct];
+      if (btn) btn.classList.add(correctArr.includes(i) ? 'correct' : 'wrong');
     }
     setTimeout(() => {
       renderStatBars(stats, correct);
@@ -839,7 +840,7 @@ function renderPodium(podiumId, lbId, lb) {
   const [first, second, third] = lb;
   const po = document.getElementById(podiumId);
   const order = [second, first, third].filter(Boolean);
-  const blocks = ['1st 🥈','1st 🥇','1st 🥉'];
+  const blocks = ['1st ðŸ¥ˆ','1st ðŸ¥‡','1st ðŸ¥‰'];
   const ranks  = ['2nd','1st','3rd'];
   po.innerHTML = order.map((p, idx) => {
     const realRank = idx === 1 ? 0 : idx === 0 ? 1 : 2;
@@ -855,20 +856,19 @@ function renderPodium(podiumId, lbId, lb) {
   renderLeaderboard(lbId, lb);
 }
 
-// ═══════════════════════════════════════════════════
-//  MUSIC ENGINE — Web Audio API procedural chiptune
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  MUSIC ENGINE â€” Web Audio API procedural chiptune
 //  100% synthesized, zero copyright issues
-// ═══════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 const Music = (() => {
   let ctx = null, masterGain = null, muted = false;
   let currentTrack = null, scheduledNodes = [], loopTimeout = null;
 
-  // Note frequencies
   const N = {
-    C3:130.81,D3:146.83,E3:164.81,F3:174.61,G3:196.00,A3:220.00,B3:246.94,
+    B2:123.47,C3:130.81,D3:146.83,E3:164.81,F3:174.61,G3:196.00,A3:220.00,B3:246.94,
     C4:261.63,D4:293.66,E4:329.63,F4:349.23,G4:392.00,A4:440.00,B4:493.88,
-    C5:523.25,D5:587.33,E5:659.25,F5:698.46,G5:783.99,A5:880.00,B5:987.77,
-    _:0 // rest
+    C5:523.25,D5:587.33,E5:659.25,F5:698.46,G5:783.99,A5:880.00,
+    _:0
   };
 
   function init() {
@@ -879,113 +879,94 @@ const Music = (() => {
     masterGain.connect(ctx.destination);
   }
 
-  function playNote(freq, startTime, duration, type='square', vol=0.4, detune=0) {
-    if (!freq) return null;
-    const osc  = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.type = type;
+  function piano(freq, startTime, duration, vol) {
+    if (!freq) return;
+    if (vol === undefined) vol = 0.5;
+    [1, 2, 3].forEach(function(harmonic) {
+      var osc  = ctx.createOscillator();
+      var gain = ctx.createGain();
+      var hVol = vol / (harmonic * harmonic);
+      osc.type = 'sine';
+      osc.frequency.value = freq * harmonic;
+      gain.gain.setValueAtTime(0, startTime);
+      gain.gain.linearRampToValueAtTime(hVol, startTime + 0.008);
+      gain.gain.exponentialRampToValueAtTime(hVol * 0.3, startTime + duration * 0.5);
+      gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
+      osc.connect(gain);
+      gain.connect(masterGain);
+      osc.start(startTime);
+      osc.stop(startTime + duration + 0.05);
+      scheduledNodes.push(osc);
+    });
+  }
+
+  function softBass(freq, startTime, duration, vol) {
+    if (!freq) return;
+    if (vol === undefined) vol = 0.22;
+    var osc  = ctx.createOscillator();
+    var gain = ctx.createGain();
+    osc.type = 'triangle';
     osc.frequency.value = freq;
-    osc.detune.value = detune;
     gain.gain.setValueAtTime(0, startTime);
-    gain.gain.linearRampToValueAtTime(vol, startTime + 0.01);
-    gain.gain.setValueAtTime(vol, startTime + duration * 0.7);
-    gain.gain.linearRampToValueAtTime(0, startTime + duration * 0.95);
+    gain.gain.linearRampToValueAtTime(vol, startTime + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration * 0.9);
     osc.connect(gain);
     gain.connect(masterGain);
     osc.start(startTime);
     osc.stop(startTime + duration);
     scheduledNodes.push(osc);
-    return osc;
   }
 
-  function playDrum(type, startTime) {
-    const buf = ctx.createBuffer(1, ctx.sampleRate * 0.15, ctx.sampleRate);
-    const data = buf.getChannelData(0);
-    for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i/data.length, type==='kick'?3:8);
-    const src  = ctx.createBufferSource();
-    const gain = ctx.createGain();
-    const filt = ctx.createBiquadFilter();
-    src.buffer = buf;
-    filt.type = 'lowpass';
-    filt.frequency.value = type === 'kick' ? 180 : 4000;
-    gain.gain.setValueAtTime(type==='kick'?0.9:0.5, startTime);
-    gain.gain.linearRampToValueAtTime(0, startTime + 0.12);
-    src.connect(filt); filt.connect(gain); gain.connect(masterGain);
-    src.start(startTime);
-    scheduledNodes.push(src);
-  }
-
-  // ── TRACK DEFINITIONS ─────────────────────────────
-  const tracks = {
-
-    // HOME: Bright, bouncy, major key — 138 BPM
-    home: () => {
-      const bpm = 138, step = 60/bpm/2;
-      const mel = [N.E5,N.E5,N.G5,N.E5,N.C5,N._,N.D5,N.E5,
-                   N.G5,N.E5,N.D5,N.C5,N.E5,N._,N.C5,N._,
-                   N.A4,N.A4,N.C5,N.A4,N.F4,N._,N.G4,N.A4,
-                   N.C5,N.A4,N.G4,N.F4,N.A4,N._,N.G4,N._];
-      const bass=[N.C3,N._,N.G3,N._,N.A3,N._,N.F3,N._,
-                  N.C3,N._,N.G3,N._,N.F3,N._,N.G3,N._,
-                  N.F3,N._,N.C3,N._,N.F3,N._,N.C3,N._,
-                  N.F3,N._,N.C3,N._,N.G3,N._,N.C3,N._];
-      const kicks=[1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,
-                   1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0];
-      const snare=[0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,
-                   0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0];
-      return { mel, bass, kicks, snare, step, len: mel.length };
+  var tracks = {
+    home: function() {
+      var bpm = 100, step = 60/bpm/2;
+      var mel = [N.E5,N._,N.G5,N._,N.E5,N._,N.C5,N._,
+                 N.D5,N._,N.F5,N._,N.D5,N._,N.B4,N._,
+                 N.C5,N._,N.E5,N._,N.G5,N._,N.E5,N._,
+                 N.F5,N._,N.E5,N._,N.D5,N._,N.C5,N._];
+      var bs  = [N.C3,N._,N.E3,N._,N.G3,N._,N.E3,N._,
+                 N.G3,N._,N.B3,N._,N.D4,N._,N.B3,N._,
+                 N.C3,N._,N.E3,N._,N.G3,N._,N.E3,N._,
+                 N.F3,N._,N.A3,N._,N.C3,N._,N.G3,N._];
+      return { mel:mel, bs:bs, step:step, len:mel.length };
     },
-
-    // LOBBY: Groovy, anticipatory, funky — 112 BPM
-    lobby: () => {
-      const bpm = 112, step = 60/bpm/2;
-      const mel = [N.G4,N._,N.B4,N.D5,N.G5,N._,N.D5,N.B4,
-                   N.A4,N._,N.C5,N.E5,N.A5,N._,N.E5,N.C5,
-                   N.F4,N._,N.A4,N.C5,N.F5,N._,N.C5,N.A4,
-                   N.G4,N._,N.B4,N.D5,N.E5,N.D5,N.B4,N._];
-      const bass=[N.G3,N._,N.G3,N._,N.D3,N._,N.D3,N._,
-                  N.A3,N._,N.A3,N._,N.E3,N._,N.E3,N._,
-                  N.F3,N._,N.F3,N._,N.C3,N._,N.C3,N._,
-                  N.G3,N._,N.G3,N._,N.D3,N._,N.G3,N._];
-      const kicks=[1,0,0,1,0,0,1,0,1,0,0,1,0,0,1,0,
-                   1,0,0,1,0,0,1,0,1,0,0,1,0,0,1,0];
-      const snare=[0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,
-                   0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0];
-      return { mel, bass, kicks, snare, step, len: mel.length };
+    lobby: function() {
+      var bpm = 88, step = 60/bpm/2;
+      var mel = [N.G4,N._,N.B4,N._,N.D5,N._,N.B4,N._,
+                 N.C5,N._,N.E5,N._,N.G5,N._,N.E5,N._,
+                 N.A4,N._,N.C5,N._,N.E5,N._,N.C5,N._,
+                 N.B4,N._,N.D5,N._,N.G4,N._,N._,N._];
+      var bs  = [N.G3,N._,N.D3,N._,N.G3,N._,N.D3,N._,
+                 N.C3,N._,N.G3,N._,N.C3,N._,N.G3,N._,
+                 N.A3,N._,N.E3,N._,N.A3,N._,N.E3,N._,
+                 N.G3,N._,N.D3,N._,N.G3,N._,N.D3,N._];
+      return { mel:mel, bs:bs, step:step, len:mel.length };
     },
-
-    // QUESTION: Tense, urgent, minor key — 165 BPM
-    question: () => {
-      const bpm = 165, step = 60/bpm/2;
-      const mel = [N.A4,N.C5,N.E5,N._,N.A5,N._,N.G5,N.E5,
-                   N.F5,N.E5,N.D5,N._,N.E5,N._,N.C5,N._,
-                   N.A4,N.C5,N.E5,N._,N.G5,N.F5,N.E5,N.D5,
-                   N.E5,N._,N.C5,N.B4,N.A4,N._,N._,N._];
-      const bass=[N.A3,N._,N.A3,N.E3,N.A3,N._,N.G3,N._,
-                  N.F3,N._,N.F3,N.C3,N.E3,N._,N.E3,N._,
-                  N.A3,N._,N.A3,N.E3,N.G3,N._,N.F3,N._,
-                  N.E3,N._,N.E3,N.B2,N.A2,N._,N.A2,N._];
-      const kicks=[1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,
-                   1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0];
-      const snare=[0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,
-                   0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0];
-      return { mel, bass, kicks, snare, step, len: mel.length };
+    question: function() {
+      var bpm = 120, step = 60/bpm/2;
+      var mel = [N.A4,N.C5,N.E5,N.A5,N.G5,N.E5,N.C5,N.A4,
+                 N.F4,N.A4,N.C5,N.F5,N.E5,N.C5,N.A4,N.F4,
+                 N.E4,N.G4,N.B4,N.E5,N.D5,N.B4,N.G4,N.E4,
+                 N.A4,N.C5,N.E5,N.G5,N.A5,N.G5,N.E5,N._];
+      var bs  = [N.A3,N._,N.A3,N._,N.E3,N._,N.E3,N._,
+                 N.F3,N._,N.F3,N._,N.C3,N._,N.C3,N._,
+                 N.E3,N._,N.E3,N._,N.B2,N._,N.B2,N._,
+                 N.A3,N._,N.A3,N._,N.E3,N._,N.A3,N._];
+      return { mel:mel, bs:bs, step:step, len:mel.length };
     }
   };
 
   function scheduleLoop(trackName, startTime) {
     if (currentTrack !== trackName) return;
-    const t = tracks[trackName]();
-    for (let i = 0; i < t.len; i++) {
-      const s = startTime + i * t.step;
-      playNote(t.mel[i],  s, t.step * 0.85, 'square',   0.35);
-      playNote(t.bass[i], s, t.step * 1.8,  'sawtooth', 0.18, -5);
-      if (t.kicks[i]) playDrum('kick', s);
-      if (t.snare[i]) playDrum('snare', s);
+    var t = tracks[trackName]();
+    for (var i = 0; i < t.len; i++) {
+      var s = startTime + i * t.step;
+      piano(t.mel[i], s, t.step * 1.6, 0.5);
+      softBass(t.bs[i], s, t.step * 1.8, 0.22);
     }
-    const loopEnd = startTime + t.len * t.step;
-    const msUntilNext = (loopEnd - ctx.currentTime) * 1000 - 100;
-    loopTimeout = setTimeout(() => scheduleLoop(trackName, loopEnd), Math.max(0, msUntilNext));
+    var loopEnd = startTime + t.len * t.step;
+    var msUntilNext = (loopEnd - ctx.currentTime) * 1000 - 100;
+    loopTimeout = setTimeout(function() { scheduleLoop(trackName, loopEnd); }, Math.max(0, msUntilNext));
   }
 
   function play(trackName) {
@@ -1000,7 +981,7 @@ const Music = (() => {
   function stop() {
     currentTrack = null;
     clearTimeout(loopTimeout);
-    scheduledNodes.forEach(n => { try { n.stop(); } catch(e){} });
+    scheduledNodes.forEach(function(n) { try { n.stop(); } catch(e){} });
     scheduledNodes = [];
   }
 
@@ -1009,24 +990,29 @@ const Music = (() => {
     if (masterGain) masterGain.gain.linearRampToValueAtTime(m ? 0 : 0.18, (ctx||{currentTime:0}).currentTime + 0.1);
   }
 
-  return { play, stop, setMuted, get muted() { return muted; }, get masterGain() { return masterGain; }, get ctx() { return ctx; } };
+  return { play:play, stop:stop, setMuted:setMuted,
+    get muted() { return muted; },
+    get masterGain() { return masterGain; },
+    get ctx() { return ctx; }
+  };
 })();
 
 function toggleMute() {
   const m = !Music.muted;
   Music.setMuted(m);
-  document.getElementById('mute-btn').textContent = m ? '🔇' : '🔊';
+  document.getElementById('mute-btn').textContent = m ? 'ðŸ”‡' : 'ðŸ”Š';
   document.getElementById('vol-slider').disabled = m;
 }
 
 function setVolume(val) {
   const v = val / 100;
   if (Music.masterGain) Music.masterGain.gain.linearRampToValueAtTime(v, Music.ctx.currentTime + 0.05);
-  document.getElementById('mute-btn').textContent = v === 0 ? '🔇' : '🔊';
+  document.getElementById('mute-btn').textContent = v === 0 ? 'ðŸ”‡' : 'ðŸ”Š';
 }
 
-// ─── INIT ─────────────────────────────────────────────────────
+// â”€â”€â”€ INIT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 initOptionsUI();
 </script>
 </body>
 </html>
+

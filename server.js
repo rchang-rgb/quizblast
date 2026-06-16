@@ -102,7 +102,8 @@ io.on('connection', (socket) => {
     if (player.answers[game.currentQ] !== undefined) return;
 
     const timeLeft = game.timeLeft || 0;
-    const correct = answerIndex === q.correct;
+    const correctAnswers = Array.isArray(q.correct) ? q.correct : [q.correct];
+    const correct = correctAnswers.includes(answerIndex);
     const points = correct ? calcPoints(timeLeft, q.time || 20) : 0;
 
     player.answers[game.currentQ] = { answerIndex, correct, points };
@@ -191,7 +192,7 @@ function endQuestion(pin) {
   const q = game.questions[game.currentQ];
   const stats = q.options.map((_, i) => ({
     count: Object.values(game.players).filter(p => p.answers[game.currentQ]?.answerIndex === i).length,
-    correct: i === q.correct,
+    correct: (Array.isArray(q.correct) ? q.correct : [q.correct]).includes(i),
   }));
   const sorted = Object.values(game.players).sort((a, b) => b.score - a.score).slice(0, 5);
 
