@@ -253,6 +253,7 @@
         <span id="q-count-label" style="color:var(--sub);font-size:.9rem;">0 questions</span>
         <div class="flex-gap">
           <button class="btn btn-gold" onclick="loadPresentationQuiz()" style="font-size:.85rem;padding:10px 16px">Load Presentation Quiz</button>
+          <button class="btn btn-gold" onclick="load80sPopCultureQuiz()" style="font-size:.85rem;padding:10px 16px;background:linear-gradient(135deg,#9b59b6,#8e44ad)">Load 80s Pop Culture Quiz</button>
           <button class="btn btn-primary" onclick="loadSampleQuestions()" style="font-size:.85rem;padding:10px 16px">Load Sample Quiz</button>
           <button class="btn btn-success btn-xl" id="create-btn" onclick="createGame()" disabled>Create Lobby!</button>
         </div>
@@ -590,6 +591,78 @@ function loadPresentationQuiz() {
   ];
   renderQuestionList();
   toast('Presentation quiz loaded! 15 questions ready.');
+}
+
+function load80sPopCultureQuiz() {
+  questions = [
+    {
+      text: "Which of these is NOT a real music genre?",
+      options: ["Gamelan", "Shoegazing", "Vapor Punk", "Afrobeat"],
+      correct: 2, time: 20
+    },
+    {
+      text: "Fela Kuti created Afrobeat as political protest. How many times was he arrested?",
+      options: ["Around 12 times", "Around 50 times", "Over 200 times", "He was never arrested"],
+      correct: 2, time: 20
+    },
+    {
+      text: "Tuvan Throat Singing was on the Voyager Golden Record. What IS the Voyager Golden Record?",
+      options: ["A Grammy given to world music artists", "A playlist NASA sent into space for alien civilizations", "A UN archive of endangered music traditions", "A record-breaking album by a Tuvan artist"],
+      correct: 1, time: 20
+    },
+    {
+      text: "Bossa Nova was invented by two people in a single apartment in 1958. Where?",
+      options: ["Buenos Aires, Argentina", "Lisbon, Portugal", "Rio de Janeiro, Brazil", "Havana, Cuba"],
+      correct: 2, time: 20
+    },
+    {
+      text: "Which composer heard Gamelan at the 1889 Paris World's Fair and was inspired to reshape classical music?",
+      options: ["Johannes Brahms", "Claude Debussy", "Ludwig van Beethoven", "Richard Wagner"],
+      correct: 1, time: 20
+    },
+    {
+      text: "'Fade Into You' by Mazzy Star belongs to which niche genre?",
+      options: ["Bossa Nova", "Quiet Storm", "Shoegaze / Dream Pop", "City Pop"],
+      correct: 2, time: 20
+    },
+    {
+      text: "'Plastic Love' by Mariya Takeuchi went viral in 2017. When was it originally recorded?",
+      options: ["1994", "1984", "1978", "2001"],
+      correct: 1, time: 20
+    },
+    {
+      text: "What candy claimed to be both a candy AND a gum?",
+      options: ["Fun Dip", "Ring Pop", "Razzles", "Nerds"],
+      correct: 2, time: 20
+    },
+    {
+      text: "Pop Rocks were rumored to be dangerous when mixed with which drink?",
+      options: ["Orange juice", "Milk", "Soda / Cola", "Lemonade"],
+      correct: 2, time: 20
+    },
+    {
+      text: "This sour candy got its name from a military bomb. What was it?",
+      options: ["Warheads", "Atomic Fireballs", "Pop Rocks", "Nerds"],
+      correct: 0, time: 20
+    },
+    {
+      text: "Invented in 1979 to stop a candy maker's daughter from sucking her thumb - what candy was it?",
+      options: ["Blow Pop", "Dum Dum", "Tootsie Pop", "Ring Pop"],
+      correct: 3, time: 20
+    },
+    {
+      text: "A Pez dispenser with original packaging sold at auction for how much?",
+      options: ["$150", "$1,100", "$32,000", "$5,000"],
+      correct: 2, time: 20
+    },
+    {
+      text: "Warheads were SO sour they caused a real physical reaction. What happened to kids who ate them?",
+      options: ["They got hiccups", "Their lips turned blue", "Their tongues bled", "Their stomachs exploded"],
+      correct: 2, time: 20
+    },
+  ];
+  renderQuestionList();
+  toast('80s Pop Culture quiz loaded! 13 questions ready.');
 }
 
 function loadSampleQuestions() {
