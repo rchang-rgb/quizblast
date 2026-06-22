@@ -314,7 +314,7 @@
 
 <!-- PODIUM -->
 <div id="podium" class="screen hidden">
-  <div style="text-align:center;max-width:600px;width:100%">
+  <div style="text-align:center;max-width:600px;width:100%;overflow-y:auto;max-height:90vh;padding-bottom:16px;">
     <div style="font-size:2rem;margin-bottom:8px;">
       <span class="confetti-emoji">*</span>
       <span class="confetti-emoji" style="animation-delay:.2s">*</span>
@@ -323,6 +323,11 @@
     <h1 style="font-size:2.5rem;margin-bottom:4px;">Game Over!</h1>
     <div class="podium-wrap" id="podium-display"></div>
     <div class="leaderboard" id="podium-lb"></div>
+    <div style="display:flex;gap:10px;justify-content:center;margin-top:16px;">
+      <button class="btn btn-primary" id="podium-prev" onclick="podiumPage(-1)" style="display:none">&#x25C0; Prev</button>
+      <button class="btn btn-primary" id="podium-next" onclick="podiumPage(1)">More Players &#x25B6;</button>
+    </div>
+    <div id="podium-page-label" style="color:var(--sub);font-size:.85rem;margin-top:6px;"></div>
     <button class="btn btn-primary btn-xl mt-24" onclick="showScreen('home')">Play Again!</button>
   </div>
 </div>
@@ -389,6 +394,9 @@ let currentQuestions = [];
 let correctAnswer = null;
 let questionDuration = 20;
 let currentOptions = [];
+let fullLeaderboard = [];
+let podiumPageIndex = 0;
+const PODIUM_PAGE_SIZE = 7;
 
 (function() {
   const canvas = document.getElementById('bg-canvas');
@@ -829,13 +837,42 @@ socket.on('game:results', ({ correct, stats, leaderboard, explanation }) => {
 
 socket.on('game:podium', ({ leaderboard }) => {
   if (myRole === 'host') {
+    fullLeaderboard = leaderboard;
+    podiumPageIndex = 0;
     renderPodium('podium-display', 'podium-lb', leaderboard);
+    updatePodiumPagination();
     showScreen('podium');
   } else {
-    renderLeaderboard('pp-leaderboard', leaderboard);
+    renderLeaderboard('pp-leaderboard', leaderboard.slice(0, 10));
     showScreen('player-podium');
   }
 });
+
+function updatePodiumPagination() {
+  const start = podiumPageIndex * PODIUM_PAGE_SIZE;
+  const end = start + PODIUM_PAGE_SIZE;
+  const page = fullLeaderboard.slice(start, end);
+  const medals = ['1st','2nd','3rd','4th','5th','6th','7th'];
+  document.getElementById('podium-lb').innerHTML = page.map((p, i) => `
+    <div class="lb-row" style="animation-delay:${i*.07}s">
+      <span class="lb-rank">${medals[i] !== undefined ? medals[i] : (start + i + 1) + 'th'}</span>
+      <span class="lb-name">${p.name}</span>
+      <span class="lb-score">${p.score.toLocaleString()} pts</span>
+    </div>
+  `).join('');
+  const total = fullLeaderboard.length;
+  const totalPages = Math.ceil(total / PODIUM_PAGE_SIZE);
+  document.getElementById('podium-prev').style.display = podiumPageIndex > 0 ? 'inline-block' : 'none';
+  document.getElementById('podium-next').style.display = podiumPageIndex < totalPages - 1 ? 'inline-block' : 'none';
+  document.getElementById('podium-page-label').textContent =
+    total > PODIUM_PAGE_SIZE ? `Showing ${start + 1}–${Math.min(end, total)} of ${total} players` : '';
+}
+
+function podiumPage(dir) {
+  const totalPages = Math.ceil(fullLeaderboard.length / PODIUM_PAGE_SIZE);
+  podiumPageIndex = Math.max(0, Math.min(totalPages - 1, podiumPageIndex + dir));
+  updatePodiumPagination();
+}
 
 socket.on('player:joined', ({ name, pin }) => {
   myPin  = pin;

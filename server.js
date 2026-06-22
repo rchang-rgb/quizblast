@@ -135,7 +135,7 @@ io.on('connection', (socket) => {
     const winner = Object.values(game.players).find(p => p.name === winnerName);
     if (winner) winner.score += 2000;
     game.phase = 'podium';
-    const sorted = Object.values(game.players).sort((a, b) => b.score - a.score).slice(0, 10);
+    const sorted = Object.values(game.players).sort((a, b) => b.score - a.score);
     io.to(pin).emit('game:podium', { leaderboard: sorted });
   });
 
@@ -162,7 +162,7 @@ function nextQuestion(pin) {
 
   if (game.currentQ >= game.questions.length) {
     game.phase = 'podium';
-    const sorted = Object.values(game.players).sort((a, b) => b.score - a.score).slice(0, 10);
+    const sorted = Object.values(game.players).sort((a, b) => b.score - a.score);
     io.to(pin).emit('game:podium', { leaderboard: sorted });
     return;
   }
