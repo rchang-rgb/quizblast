@@ -254,6 +254,7 @@
         <div class="flex-gap">
           <button class="btn btn-gold" onclick="loadPresentationQuiz()" style="font-size:.85rem;padding:10px 16px">Load Presentation Quiz</button>
           <button class="btn btn-gold" onclick="load80sPopCultureQuiz()" style="font-size:.85rem;padding:10px 16px;background:linear-gradient(135deg,#9b59b6,#8e44ad)">Load 80s Pop Culture Quiz</button>
+          <button class="btn btn-gold" onclick="loadMagicTriviaQuiz()" style="font-size:.85rem;padding:10px 16px;background:linear-gradient(135deg,#1abc9c,#16a085)">Load Magic Trivia Quiz</button>
           <button class="btn btn-primary" onclick="loadSampleQuestions()" style="font-size:.85rem;padding:10px 16px">Load Sample Quiz</button>
           <button class="btn btn-success btn-xl" id="create-btn" onclick="createGame()" disabled>Create Lobby!</button>
         </div>
@@ -682,7 +683,40 @@ function load80sPopCultureQuiz() {
     [questions[i], questions[j]] = [questions[j], questions[i]];
   }
   renderQuestionList();
-  toast('80s Pop Culture quiz loaded! 13 questions ready.');
+  toast('80s Pop Culture quiz loaded! 16 questions ready.');
+}
+
+function loadMagicTriviaQuiz() {
+  const raw = [
+    { text: "What is the technical term for a magician's sleight-of-hand technique?", options: ["Prestidigitation", "Illusionation", "Manifestation", "Conjuration"], correct: 0, time: 20 },
+    { text: "What card is most commonly used as the 'go-to' card in card tricks?", options: ["Queen of Spades", "Ace of Hearts", "Ace of Spades", "King of Diamonds"], correct: 2, time: 20 },
+    { text: "Which famous magician was known for escaping handcuffs, straitjackets, and locked tanks of water?", options: ["David Copperfield", "Harry Houdini", "David Blaine", "Penn Jillette"], correct: 1, time: 20 },
+    { text: "Which duo combines comedy with magic and always ends shows with 'That's it. That's the show.'?", options: ["Siegfried & Roy", "Penn & Teller", "The Amazing Johnathan & friend", "Criss Angel & crew"], correct: 1, time: 20 },
+    { text: "What term describes a fake or 'dummy' object used to trick the audience's eye?", options: ["A gimmick", "A prop", "A decoy", "A gaff"], correct: 0, time: 20 },
+    { text: "Which famous magician made the Statue of Liberty 'disappear' on television?", options: ["David Blaine", "David Copperfield", "Criss Angel", "Chris Ramsay"], correct: 1, time: 20 },
+    { text: "What do magicians call the secret method behind a trick?", options: ["The formula", "The mechanism", "The workings", "The method"], correct: 3, time: 20 },
+    { text: "What is a 'forced card' in a card trick?", options: ["A card that's bent or damaged", "A card the magician secretly makes you pick", "The last card in the deck", "A card with two faces"], correct: 1, time: 20 },
+    { text: "What's the name for a magician who specializes in reading minds or predicting thoughts?", options: ["An illusionist", "A mentalist", "A conjurer", "A soothsayer"], correct: 1, time: 20 },
+    { text: "Which magician is best known for extreme stunts like being frozen in ice or buried alive?", options: ["David Blaine", "Lance Burton", "Doug Henning", "Ricky Jay"], correct: 0, time: 20 },
+    { text: "What is 'misdirection' in magic?", options: ["Giving the audience wrong directions to their seats", "Drawing attention away from the secret method", "A trick that goes wrong", "A type of card shuffle"], correct: 1, time: 20 },
+    { text: "Which item is traditionally pulled out of a magician's hat?", options: ["A dove", "A rabbit", "A bouquet of flowers", "A rubber chicken"], correct: 1, time: 20 },
+  ];
+  // Shuffle options within each question, keeping correct index accurate
+  questions = raw.map(q => {
+    const indexed = q.options.map((opt, i) => ({ opt, isCorrect: i === q.correct }));
+    for (let i = indexed.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [indexed[i], indexed[j]] = [indexed[j], indexed[i]];
+    }
+    return { ...q, options: indexed.map(o => o.opt), correct: indexed.findIndex(o => o.isCorrect) };
+  });
+  // Shuffle question order
+  for (let i = questions.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [questions[i], questions[j]] = [questions[j], questions[i]];
+  }
+  renderQuestionList();
+  toast('Magic Trivia quiz loaded! 12 questions ready.');
 }
 
 function loadSampleQuestions() {
